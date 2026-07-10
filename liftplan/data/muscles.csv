@@ -1,0 +1,56 @@
+Muscle_ID,Specific_Muscle,Nickname,Function,Group_ID,Area_ID,Head_To_Toe_Order
+MU0001,Tibialis Posterior,Tibialis P,Stability,MG0001,MA0001,1
+MU0002,Tibialis Anterior,Tibialis A,Stability,MG0001,MA0001,2
+MU0003,Peroneus Longus,Peroneus L,Stability,MG0002,MA0001,3
+MU0004,Fibularis Brevis,Fibularis B,Stability,MG0002,MA0001,4
+MU0005,Gastrocnemius,Gastro,Propulsion,MG0003,MA0001,5
+MU0006,Soleus,Soleus,Propulsion,MG0003,MA0001,6
+MU0007,Rectus Femoris,Rectus Fem,Propulsion,MG0004,MA0002,7
+MU0008,Vastus Lateralis,Vastus Lat,Propulsion,MG0004,MA0002,8
+MU0009,Vastus Medialis,Vastus Med,Propulsion,MG0004,MA0002,9
+MU0010,Vastus Intermedius,Vastus Inter,Propulsion,MG0004,MA0002,10
+MU0011,Semimembranosus,Semimem,Propulsion,MG0005,MA0002,11
+MU0012,Semitendinosus,Semitend,Propulsion,MG0005,MA0002,12
+MU0013,Biceps Femoris,Bicep Fem,Propulsion,MG0005,MA0002,13
+MU0014,Gluteus Maximus,Glutes Max,Propulsion,MG0006,MA0002,14
+MU0015,Gluteus Medius,Glutes Med,Stability,MG0006,MA0002,15
+MU0016,Gluteus Minimus,Glutes Min,Stability,MG0006,MA0002,16
+MU0017,Adductors,Adductors,Stability,MG0007,MA0002,17
+MU0054,Iliacus,Iliacus,Stability,MG0008,MA0002,18
+MU0055,Psoas,Psoas,Stability,MG0008,MA0002,19
+MU0018,Rectus Abdominis,Rectus Abd,Stability,MG0009,MA0003,20
+MU0020,Obliques - Upper,Obliques Up,Stability,MG0009,MA0003,22
+MU0021,Obliques - Lower,Obliques Low,Stability,MG0009,MA0003,23
+MU0022,Transversus Abdominis,Transvers Abd,Stability,MG0009,MA0003,24
+MU0023,Pyramidalis,Pyramid,Stability,MG0009,MA0003,25
+MU0024,Erector Spinae,Erector S,Stability,MG0009,MA0004,26
+MU0025,Quadratus Lumborum,Quadratus L,Stability,MG0009,MA0004,27
+MU0026,Trapezius - High,Traps Hi,Stability,MG0010,MA0005,28
+MU0027,Trapezius - Middle,Traps Mid,Stability,MG0010,MA0005,29
+MU0028,Trapezius - Low,Traps Low,Stability,MG0010,MA0005,30
+MU0029,Latissimus Dorsi,Lats,Propulsion,MG0011,MA0005,31
+MU0030,Rhomboids,Rhombs,Stability,MG0012,MA0005,32
+MU0031,Levator Scapulae,Levator S,Stability,MG0013,MA0005,33
+MU0032,Supraspinatus,Supraspin,Stability,MG0014,MA0005,34
+MU0033,Subscapularis,Subscap,Stability,MG0014,MA0005,35
+MU0034,Teres Minor,Teres M,Stability,MG0014,MA0005,36
+MU0035,Infraspinatus,Infraspin,Stability,MG0014,MA0005,37
+MU0036,Anterior Deltoid,Delts A,Propulsion,MG0015,MA0006,38
+MU0037,Lateral Deltoid,Delts L,Propulsion,MG0015,MA0006,39
+MU0038,Posterior Deltoid,Delts P,Propulsion,MG0015,MA0006,40
+MU0039,Pectoralis Major - High,Pec Hi,Propulsion,MG0016,MA0007,41
+MU0040,Pectoralis Major - Middle,Pec Mid,Propulsion,MG0016,MA0007,42
+MU0041,Pectoralis Major - Low,Pec Low,Propulsion,MG0016,MA0007,43
+MU0042,Pectoralis Minor,Pec Minor,Stability,MG0016,MA0007,44
+MU0043,Serratus Anterior,Serratus A,Stability,MG0017,MA0007,45
+MU0044,Subclavius,Subclav,Stability,MG0018,MA0007,46
+MU0045,Triceps Brachii - Lateral Head,Triceps Lat,Propulsion,MG0019,MA0008,47
+MU0046,Triceps Brachii - Long Head,Triceps Lon,Propulsion,MG0019,MA0008,48
+MU0047,Triceps Brachii - Medial Head,Triceps Med,Propulsion,MG0019,MA0008,49
+MU0048,Biceps Brachii - Long Head,Biceps,Propulsion,MG0020,MA0008,50
+MU0049,Biceps Brachii - Short Head,Biceps,Propulsion,MG0020,MA0008,51
+MU0050,Brachialis,Brachialis,Propulsion,MG0021,MA0008,52
+MU0051,Coracobrachialis,Coracorbra,Stability,MG0020,MA0008,53
+MU0052,Forearm (Flexors),Forearm F,Stability,MG0022,MA0009,54
+MU0053,Forearm (Extensors),Forearm E,Stability,MG0022,MA0009,55
+MU0056,Brachioradialis,Brachiorad,Propulsion,MG0022,MA0009,56

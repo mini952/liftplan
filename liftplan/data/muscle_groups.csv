@@ -1,0 +1,23 @@
+Group_ID,Group_Name,Group_Nickname,Default_Area_ID,Display_Order
+MG0001,Tibialis,Tibialis,MA0001,1
+MG0002,Peroneals (Fibularis),Pero (Fibu),MA0001,2
+MG0003,Calves,Calves,MA0001,3
+MG0004,Quadriceps,Quads,MA0002,4
+MG0005,Hamstring,Hamstring,MA0002,5
+MG0006,Gluteus,Glutes,MA0002,6
+MG0007,Adductors,Adductors,MA0002,7
+MG0008,Hip Flexor,Hip Flexor,MA0002,8
+MG0009,Abdominals,Abs,MA0003,9
+MG0010,Trapezius,Traps,MA0005,10
+MG0011,Latissimus Dorsi,Lats,MA0005,11
+MG0012,Rhomboids,Rhomboids,MA0005,12
+MG0013,Levator Scapulae,Levator Scap,MA0005,13
+MG0014,Rotator Cuff,Rotator Cuff,MA0005,14
+MG0015,Deltoids,Delts,MA0006,15
+MG0016,Pectorals,Pecs,MA0007,16
+MG0017,Serratus Anterior,Serratus,MA0007,17
+MG0018,Subclavius,Subclavius,MA0007,18
+MG0019,Triceps,Triceps,MA0008,19
+MG0020,Biceps,Biceps,MA0008,20
+MG0021,Brachialis,Brachialis,MA0008,21
+MG0022,Forearms,Forearms,MA0009,22
