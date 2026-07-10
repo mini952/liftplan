@@ -1,0 +1,10 @@
+Area_ID,Area_Name,Display_Order
+MA0001,Lower legs,1
+MA0002,Upper legs,2
+MA0003,Core,3
+MA0004,Lower back,4
+MA0005,Upper back,5
+MA0006,Shoulders,6
+MA0007,Chest,7
+MA0008,Arms,8
+MA0009,Forearms,9
