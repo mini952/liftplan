@@ -1,4 +1,4 @@
-# Workout Planning & Tracking App — Project Plan
+# LiftPlan — Workout Planning & Tracking App — Project Plan
 
 **Status:** Living document. This is the working reference for the project inside the Claude project.
 **Last updated:** 2026-07-10
@@ -27,7 +27,7 @@ These are project-wide invariants. They resolve disputes without re-litigating.
 - **R1 — The databases are the source of truth.** The ChatGPT handoff document is history and context only. When the data and the doc conflict, the data wins and the doc/this plan is updated to match — never the reverse.
 - **R2 — Join on IDs, never on text.** Every relationship is keyed by `Exercise_ID` / `Muscle_ID`. Names are display-only and may change freely without breaking anything.
 - **R3 — Store facts once; derive everything else in code.** The app computes joins, roll-ups, text labels, volume, and XP at runtime. Stored data stays minimal and non-redundant.
-- **R4 — A fact row exists only when a muscle is genuinely involved.** Absence of a row means "not meaningfully worked." There is no stored `0`. `1` is the floor (minimally involved). This is the sparse principle, applied at the one table where it belongs (the exercise–muscle table).
+- **R4 — A fact row exists only when a muscle is genuinely involved.** Absence of a row means "not meaningfully worked." There is no stored `0`; `1` is the floor (minimally involved). All involvement down to `1` is *retained* in the data and hidden only at display, via an adjustable threshold (D-09/R6) — so the table is deliberately **inclusive, not lean**. In practice the migrated seed is **dense and uniform** (every analyzed exercise currently carries the same ~50 muscles; see §4.2), as expected of group-grain migration-era data; Phase 8 turns that into real per-exercise involvement (D-29).
 - **R5 — Reference data is read-only at runtime; personal data is read-write.** Reference tables live in the repo and are edited by the user + AI. Personal data (plans, logs, XP) lives in the browser and is exported/imported by the user.
 - **R6 — Keep the analysis, filter at display.** All muscle involvement (down to intensity 1) is retained in the data. The heatmap applies an adjustable *display threshold* to hide trivial involvement. Filtering is a view setting, not a data deletion.
 - **R7 — Consistency over speed.** Repeatable frameworks (the coverage checklist, fixed intensity cutoffs, ID mapping) are preferred over one-off intuition, to prevent drift across exercises.
@@ -79,7 +79,7 @@ muscle_groups (~22) ──Group_ID──►  muscles (~56)
                                         ▲
                                         │ Muscle_ID
                                         │
-exercises (~62) ──Exercise_ID──►  exercise_muscle  (the fact table; sparse)
+exercises (~62) ──Exercise_ID──►  exercise_muscle  (the fact table; one row per involved pair, ≥1)
 ```
 
 - `exercise_muscle` is the heart of the system: **one row = one genuinely-involved exercise–muscle pair.**
@@ -136,7 +136,7 @@ Dropped from the old sheet: `Repeat`, `Main Muscle`, `Main Muscle Group Nickname
 
 **Companion file:** a standalone `data_dictionary.csv` documents every column of all five tables (type, allowed values, format rules, descriptions) plus key derived fields. It is the authoritative home for the old in-sheet "Criteria" knowledge — the exercise-name format, the enum lists, and the derivation rules (D-24).
 
-#### `exercise_muscle.csv` — the fact table (sparse; rows only where involved, R4)
+#### `exercise_muscle.csv` — the fact table (inclusive; one row per genuinely-involved pair, intensity ≥1, R4)
 | Column | Type | Notes |
 |---|---|---|
 | `EM_ID` | int PK | surrogate key |
@@ -358,6 +358,8 @@ Final check per omitted muscle: would fatigue there reduce performance, does it 
 | D-25 | Exercise de-duplication | App-level uniqueness rule prevents creating a duplicate exercise (same movement + equipment + variation). No stored field; replaces the dead `Repeat` column. Variant *grouping* (a stored relationship) is a separate, parked concern (P-17). | 2026-07-09 |
 | D-26 | Exercise description field | Add a `Description` column to `exercises.csv` (what the movement is / how it differs from look-alikes, e.g. reverse-hyper vs hyper). Distinct from `Notes`; app can show it as a tooltip. Empty now, filled opportunistically; disambiguation-critical ones before the Phase 8 re-analysis. | 2026-07-10 |
 | D-27 | Rectus Abdominis split | Split RA into Upper / Lower (regional, same convention as the obliques D-21). *Decided now; executed in Phase 8* alongside the re-analysis, so upper/lower values are assigned in one deliberate pass rather than duplicating the current single RA score. | 2026-07-10 |
+| D-28 | App name + icon | **LiftPlan** (working choice, "for now"), from the shortlist after pressure-testing (availability / logo / sound). Clean as an exact-string name; crowded lift-app field is the only downside (acceptable for single-user personal use). Icon = Roboto Slab Bold `LP` monogram, aqua `#31D3D0` on ink `#0F172A`; 1024×1024 master with rounded/transparent corners. `MesoQuest` reserved for the gamified tracking view (not the app). Revisit only if a stronger name emerges before the repo is created. *(Full rationale + rejected options archived in `docs/naming_and_icon_handoff.md`.)* | 2026-07-10 |
+| D-29 | Fact-table density labeling | Relabel the exercise–muscle table from "sparse" to **inclusive / dense** across the plan, to match the data (R1). No data or app change — a truth-in-labeling fix. Reflects that the migrated seed retains all involvement down to intensity `1` (D-09/R6) and is currently dense and uniform (the same ~50 of 55 muscles on every one of the 25 analyzed exercises; 74% of rows at intensity ≤3). Phase 8 resolves this into real per-exercise involvement. | 2026-07-10 |
 
 ### 7.2 Parked (decide in the noted phase)
 
@@ -405,4 +407,4 @@ Everything else is either decided (§7.1) or correctly deferred to its build pha
 - **Propulsion muscle** — primary force producer. **Stability muscle** — controls position / transfers force.
 - **Isotonic** — muscle doing dynamic (shortening/lengthening) work. **Isometric** — muscle holding position under load.
 - **Inherit-from-group** — assigning intensity at group level and flowing it to each specific head until an exercise justifies differentiating them (§4.5).
-- **Sparse fact table** — store only genuinely-involved exercise–muscle relationships; absence = not involved (R4).
+- **Inclusive fact table** — one row per genuinely-involved exercise–muscle pair (intensity ≥1); no stored zeros, but all real involvement down to `1` is retained and filtered at display (R4, D-09/R6). *(Earlier framed as "sparse"; the migrated seed is in fact dense and uniform — see §4.2 and D-29.)*

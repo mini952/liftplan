@@ -1,4 +1,4 @@
-# MyoPlan
+# LiftPlan
 
 A personal, single-user workout **planning and tracking** app. Desktop-first, runs entirely
 in your browser, no server and no login. Built to grow through the phases laid out in
@@ -54,7 +54,7 @@ You don't have to touch a command line for any of this.
 
 1. Go to https://github.com and sign in (create a free account if you don't have one).
 2. Click the **+** in the top-right → **New repository**.
-   - Name it `myoplan` (or whatever name you land on).
+   - Name it `liftplan` (or keep whatever you already named it — the repo name doesn't have to match the app name).
    - Keep it **Public**. On a free GitHub account, Pages only publishes from *public* repositories — private-repo Pages needs a paid plan (Pro or higher). Public is fine here: the repo holds the app code and reference CSVs, not your workout logs (those live in your browser), so nothing sensitive is exposed.
    - Leave everything else default and click **Create repository**.
 3. On the new repo page, click **uploading an existing file** (the link in the middle).
@@ -67,7 +67,7 @@ You don't have to touch a command line for any of this.
    - Under "Build and deployment", Source = **Deploy from a branch**.
    - Branch = **main**, folder = **/ (root)**. Click **Save**.
 7. Wait about a minute, then refresh. Pages will show a green banner with your live URL,
-   something like `https://YOUR-USERNAME.github.io/myoplan/`.
+   something like `https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/`.
 8. Open that URL. You should see the app with **no "Preview mode" banner** — that confirms it's
    reading the live CSVs.
 
