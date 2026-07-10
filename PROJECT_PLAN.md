@@ -282,11 +282,12 @@ The current databases are Google Sheets exported to `.xlsx`. The cross-sheet `IM
 
 Phases are sequenced so each one produces something usable and de-risks the next. Parked decisions are resolved *inside the phase that needs them*, not up front.
 
-**Phase 0 — Data foundation.**
+**Phase 0 — Data foundation. ✓ Complete (2026-07-10).**
 Migrate Sheets → the five clean CSVs (§5). Produce the muscle-name→ID mapping table and the `data_dictionary.csv` (D-24). Run validation (§5.2). *Deliverable:* a validated, ID-keyed dataset + data dictionary. *No app yet.*
 
-**Phase 1 — App skeleton on GitHub Pages.**
+**Phase 1 — App skeleton on GitHub Pages. ✓ Complete (2026-07-10).**
 Static HTML/JS that fetches the CSVs, performs ID joins in code, and displays the databases (browse exercises, muscles, and an exercise's involved muscles). JSON export/import stub. Confirm the GitHub Pages + Chrome-shortcut workflow end-to-end. *Deliverable:* a live, installable app that reads real data.
+*Shipped:* single self-contained `index.html` (fetches `data/*.csv` live on Pages, falls back to a baked-in snapshot for offline/preview). Four views — Exercises, Muscles, Structure, Data-health (live §5.2 integrity checks). JSON export/import stub. **Deployed and live** on GitHub Pages from the public repo `liftplan` (`https://mini952.github.io/liftplan/`), installable as a Chrome dock app with the LP icon. App named **LiftPlan** (D-28) with the aqua-on-ink `LP` icon (rounded master + opaque square/maskable variant + `manifest.webmanifest` for a clean installed icon). Phase-1 validation checklist run and passed (no preview banner = live CSVs; spot-checks correct; Abdominals under both Core + Lower back; all integrity checks green; export/import round-trips; dock shortcut opens correctly).
 
 **Phase 2 — Planning core.**
 Build a program → mesocycle → week template → day → ordered exercise list. Persist to browser storage. Exercise *order* is captured (feeds the freshness model later). *Deliverable:* can construct and save a plan.
@@ -382,13 +383,15 @@ Final check per omitted muscle: would fatigue there reduce performance, does it 
 | P-16 | Re-evaluate the migrated group-grain 25 with an improved analysis system | **Phase 8** | Now a named phase (muscle-list refinement + full re-analysis), not just "later"; differentiate-or-consolidate the inherited multi-head groups (vasti etc.). |
 | P-17 | Exercise variant grouping / inheritance (`Canonical_Exercise_ID` self-reference) | Later | The unfinished "variant inheritance" idea from the handoff doc: let variants (e.g. Incline Bench DB vs BB) share one canonical movement so volume/heatmap math treats them sensibly. Distinct from the dedup rule (D-25). Possibly useful, not needed now. |
 | P-18 | Does `muscles.Function` earn its keep? | Phase 4 / 6 | Keep for now (distinct from `Muscle_Role`; the "which stabilizers fatigue?" goal wants it). Confirm a real consumer exists once the fatigue/XP model is built; drop if nothing uses it. |
+| P-19 | App-UI palette / brand-color direction | Phase 3 | Keep the Phase-1 clinical "chart-paper" UI palette (paper/slate/oxblood/steel) or re-theme the interior to the LiftPlan brand tokens — aqua `#31D3D0` on ink `#0F172A` (from D-28). Decide alongside the heatmap so the aqua accent and the warm heat-ramp are designed together (cool brand vs. warm data). Launcher/dock icon + `theme-color` are already on-brand; only the interior UI is open. |
 
 ---
 
 ## 8. Open Questions & Immediate Next Actions
 
-**Immediate next action (Phase 0):** run the migration in §5 to produce the five validated CSVs + the muscle-name→ID mapping table. One small input remains, and it can be answered in-flight — it doesn't block starting:
-- Finalize `Function` (leaning **Stability**) for Iliacus and Psoas during the cleaning pass.
+**Phases 0 and 1 are complete (2026-07-10).** The dataset is migrated/validated and the app skeleton is deployed and live on GitHub Pages (repo `liftplan`), installable as a Chrome dock app.
+
+**Immediate next action (Phase 2 — Planning core):** build the program → mesocycle → week template → day → ordered-exercise-list structure and persist it to browser storage (capturing exercise *order* for the later freshness model). *To be started in a new chat within this project* — that chat should read this plan, name the phase explicitly, and note that browser-storage persistence must move from the Phase-1 in-memory/preview stub to real persistent storage on the deployed build (§3 development caveat).
 
 Everything else is either decided (§7.1) or correctly deferred to its build phase (§7.2).
 
