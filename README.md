@@ -55,7 +55,7 @@ You don't have to touch a command line for any of this.
 1. Go to https://github.com and sign in (create a free account if you don't have one).
 2. Click the **+** in the top-right → **New repository**.
    - Name it `myoplan` (or whatever name you land on).
-   - Set it to **Private** if you'd like — Pages works on private repos with a free account.
+   - Keep it **Public**. On a free GitHub account, Pages only publishes from *public* repositories — private-repo Pages needs a paid plan (Pro or higher). Public is fine here: the repo holds the app code and reference CSVs, not your workout logs (those live in your browser), so nothing sensitive is exposed.
    - Leave everything else default and click **Create repository**.
 3. On the new repo page, click **uploading an existing file** (the link in the middle).
 4. Open this project folder on your computer, select **everything inside it**, and drag it all
