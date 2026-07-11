@@ -1,7 +1,7 @@
 # LiftPlan — Workout Planning & Tracking App — Project Plan
 
 **Status:** Living document. This is the working reference for the project inside the Claude project.
-**Last updated:** 2026-07-10
+**Last updated:** 2026-07-11
 **Owner:** Single user (personal use)
 
 > **How to use this file:** Sections 1–5 are the settled foundation (vision, rules, platform, data model, migration). Section 6 is the build roadmap. Section 7 is the decision log — the running record of what's *decided* vs. *parked*, and this is the section that changes most often. When a parked decision gets resolved, move it up into "Decided" with a date. When the databases and this document disagree, **the databases win** (see Rule R1).
@@ -31,7 +31,8 @@ These are project-wide invariants. They resolve disputes without re-litigating.
 - **R5 — Reference data is read-only at runtime; personal data is read-write.** Reference tables live in the repo and are edited by the user + AI. Personal data (plans, logs, XP) lives in the browser and is exported/imported by the user.
 - **R6 — Keep the analysis, filter at display.** All muscle involvement (down to intensity 1) is retained in the data. The heatmap applies an adjustable *display threshold* to hide trivial involvement. Filtering is a view setting, not a data deletion.
 - **R7 — Consistency over speed.** Repeatable frameworks (the coverage checklist, fixed intensity cutoffs, ID mapping) are preferred over one-off intuition, to prevent drift across exercises.
-- **R8 — The repo is the single canonical home for the plan and reference data.** `PROJECT_PLAN.md`, `data_dictionary.csv`, and the five reference CSVs live in the `liftplan` repo; that copy is authoritative. Each phase-chat begins by fetching the latest `PROJECT_PLAN.md` from the repo raw URL (`https://raw.githubusercontent.com/mini952/liftplan/refs/heads/main/PROJECT_PLAN.md`) before doing anything else. The Claude-project file copy is a fallback cache, not the source of truth. (Extends R1: repo data wins.)
+- **R8 — The repo is the canonical runtime source of truth; fetch on demand.** At the start of each phase-chat, the latest `PROJECT_PLAN.md` and reference files are fetched from their raw GitHub URLs and treated as authoritative over any Claude-project cache. Only the specific file(s) a task actually needs are fetched — not all of them on every message. *(Recorded 2026-07-11: this rule was already in force but previously unwritten — R1 catch-up.)*
+- **R9 — Warmups never count.** Warmup sets are excluded from every volume, stimulus, fatigue, heatmap, and XP computation, wherever they appear. A planned prescription is working sets by definition; warmups carry no RIR. (Established by D-35.)
 
 ---
 
@@ -55,7 +56,7 @@ These are project-wide invariants. They resolve disputes without re-litigating.
 - Personal data **persists across code updates** because it's tied to the app's origin, not bundled with the code.
 - A **JSON export / import** feature is the backup mechanism and the future migration path to a phone. The user is responsible for exporting (there is no automatic cloud sync in v1).
 
-**Development caveat (already understood):** previews built inside the Claude project cannot use browser storage, so prototypes run on **in-memory** data. The production GitHub Pages build uses persistent browser storage. It's the same code with one storage swap — designed for from the start.
+**Development caveat (already understood):** previews built inside the Claude project cannot use browser storage, so prototypes run on **in-memory** data. The production GitHub Pages build uses persistent browser storage. It's the same code with one storage swap — designed for from the start. *(Phase 2 implements this: `localStorage` on the deployed build, with an automatic in-memory fallback and a "preview — not saving" banner when storage is unavailable.)*
 
 **Parked platform items:** native iPhone app; automatic cloud sync. (See §7.)
 
@@ -156,8 +157,9 @@ Dropped from the old sheet: `Repeat`, `Main Muscle`, `Main Muscle Group Nickname
 - **Text intensity label** ← from `Intensity_Value` via fixed cutoffs (cutoffs = parked, §7).
 - **Main / primary mover of an exercise** ← highest-intensity `Primary` row.
 - **Muscle group & area for a fact row** ← follow `Muscle_ID` → `muscles.csv`.
-- **Sets per muscle / group / area per week** ← join planned/logged sets to fact rows, roll up.
+- **Sets per muscle / group / area per week** ← join planned/logged **working** sets (R9) to fact rows, roll up.
 - **Volume, stimulus, fatigue, SFR, XP** ← formulas TBD (parked, §7).
+- **Per-week mesocycle prescriptions (the ramp)** ← derived from the single stored week template + working-week count + deload flag (D-30); the week-to-week load/rep/set progression and RIR taper are computed, not stored (P-08, Phase 5).
 
 ### 4.5 The inherit-from-group rule (granularity)
 
@@ -165,45 +167,50 @@ The canonical muscle list keeps **all specific muscles** (all four vasti, all pe
 
 **Expected consequence:** early on, the Specific-Muscle heatmap and the Group heatmap will often look identical, because most values are inherited. The Specific view becomes more informative only as heads are deliberately differentiated over time. This is correct behavior, not a bug.
 
-### 4.6 Personal-data JSON (draft — depends on parked decisions)
+### 4.6 Personal-data JSON
 
-These shapes are a v1 sketch; fields tied to parked formulas (XP, fatigue) will firm up in later phases.
+The **root container and the program → mesocycle → week-template → day → exercise shape are frozen** (D-30–D-34, D-36) and implemented in Phase 2. The logged-sessions and XP shapes further down remain v1 sketches; fields tied to parked formulas (XP, fatigue) firm up in Phases 5–6.
 
 ```jsonc
-// program (macrocycle)
+// personal-data root (D-33) — the ENTIRE object is what export / import reads and writes
 {
-  "id": "prog_01",
-  "name": "Winter Block",
-  "mesocycles": [{
-    "id": "meso_01",
-    "name": "Hypertrophy A",
-    "weeks": 6,
-    "deloadWeek": true,
-    "microcycle": {                       // the repeated week template
-      "days": [{
-        "id": "day_push_a",
-        "name": "Push A",
-        "exercises": [{
-          "exerciseId": "EX0017",
-          "order": 1,                     // order drives the "freshness" model
-          "plan": {                       // planned ramp across the weeks
-            "startWeight": 60, "startReps": 8, "startRIR": 3,
-            "weekly": [                   // app pre-fills; user adjusts
-              { "week": 1, "weight": 60, "reps": 8,  "rir": 3 },
-              { "week": 2, "weight": 60, "reps": 9,  "rir": 2 },
-              { "week": 3, "weight": 60, "reps": 10, "rir": 1 },
-              { "week": 4, "weight": 65, "reps": 8,  "rir": 3 }
+  "version": 1,                   // format-version integer, for forward-migration
+  "activeProgramId": "prog_01",   // exactly one active program (D-32)
+  "programs": [                   // a *library* of named programs (D-32)
+    {
+      "id": "prog_01",            // a Program == the macrocycle (D-36): an ordered set of mesocycles
+      "name": "Winter Block",
+      "createdAt": "2026-07-10",
+      "mesocycles": [{
+        "id": "meso_01",
+        "name": "Hypertrophy A",
+        "weeks": 6,               // working weeks
+        "deload": true,           // adds one *derived* deload week (D-30)
+        "microcycle": {           // ONE week template, stored once; weeks 2..N + deload are DERIVED (D-30, R3)
+          "days": [{
+            "id": "day_push_a",
+            "name": "Push A",
+            "exercises": [        // ORDER = array position (D-31); no stored `order` field (R3)
+              {
+                "exerciseId": "EX0017",
+                "sets": 3,          // WORKING sets (warmups never counted — R9)
+                "repRangeLow": 8,
+                "repRangeHigh": 12,
+                "targetRIR": 2      // week-1 STARTING RIR (D-34); taper toward 0 derived in Phase 5 (P-08)
+              }
             ]
-          }
-        }]
+          }]
+        }
       }]
     }
-  }]
+  ],
+  "sessions": [],                 // reserved: Phase 5 logging (sketch below)
+  "xp": { "byMuscle": {} }        // reserved: Phase 6 (sketch below)
 }
 ```
 
 ```jsonc
-// logged sessions (what actually happened)
+// logged sessions (what actually happened) — v1 SKETCH, firms up in Phase 5
 {
   "sessions": [{
     "id": "sess_2026_07_09",
@@ -211,10 +218,9 @@ These shapes are a v1 sketch; fields tied to parked formulas (XP, fatigue) will 
     "mesocycleId": "meso_01",
     "weekNumber": 1,
     "dayId": "day_push_a",
-    "entries": [{
+    "entries": [{                 // order = array position, per D-31
       "exerciseId": "EX0017",
-      "order": 1,
-      "sets": [
+      "sets": [                   // per-set warmup/working flag lands here (P-21); warmups excluded from counting (R9)
         { "set": 1, "weight": 60, "reps": 8, "rir": 3 },
         { "set": 2, "weight": 60, "reps": 8, "rir": 2 }
       ]
@@ -224,7 +230,7 @@ These shapes are a v1 sketch; fields tied to parked formulas (XP, fatigue) will 
 ```
 
 ```jsonc
-// XP state (per specific muscle; group/area rolled up in app)
+// XP state (per specific muscle; group/area rolled up in app) — v1 SKETCH, firms up in Phase 6
 {
   "byMuscle": {
     "MU0048": { "xp": 12, "history": [ { "date": "2026-07-09", "delta": 3, "reason": "Push A" } ] }
@@ -232,7 +238,7 @@ These shapes are a v1 sketch; fields tied to parked formulas (XP, fatigue) will 
 }
 ```
 
-Logged per set (from the Strong-app pattern): **weight, reps, RIR/RPE.** Rest is optional/likely unused; **tempo** is a possible optional qualifier (parked).
+Logged per set (from the Strong-app pattern): **weight, reps, RIR** — RIR is the single stored effort metric (D-34; RPE is derivable as `10 − RIR`, display-only). Rest is optional/likely unused; **tempo** is a possible optional qualifier (parked, P-09).
 
 ---
 
@@ -290,17 +296,18 @@ Migrate Sheets → the five clean CSVs (§5). Produce the muscle-name→ID mappi
 Static HTML/JS that fetches the CSVs, performs ID joins in code, and displays the databases (browse exercises, muscles, and an exercise's involved muscles). JSON export/import stub. Confirm the GitHub Pages + Chrome-shortcut workflow end-to-end. *Deliverable:* a live, installable app that reads real data.
 *Shipped:* single self-contained `index.html` (fetches `data/*.csv` live on Pages, falls back to a baked-in snapshot for offline/preview). Four views — Exercises, Muscles, Structure, Data-health (live §5.2 integrity checks). JSON export/import stub. **Deployed and live** on GitHub Pages from the public repo `liftplan` (`https://mini952.github.io/liftplan/`), installable as a Chrome dock app with the LP icon. App named **LiftPlan** (D-28) with the aqua-on-ink `LP` icon (rounded master + opaque square/maskable variant + `manifest.webmanifest` for a clean installed icon). Phase-1 validation checklist run and passed (no preview banner = live CSVs; spot-checks correct; Abdominals under both Core + Lower back; all integrity checks green; export/import round-trips; dock shortcut opens correctly).
 
-**Phase 2 — Planning core.**
+**Phase 2 — Planning core. ✓ Complete (2026-07-11).**
 Build a program → mesocycle → week template → day → ordered exercise list. Persist to browser storage. Exercise *order* is captured (feeds the freshness model later). *Deliverable:* can construct and save a plan.
+*Shipped:* a **Plan** view (now the app's landing tab) with a program **library** bar (D-32), a mesocycle outline, and a week-template editor. Mesocycles store one week template + working-week count + deload flag (D-30); day cards hold ordered exercises (order = array position, D-31) with the baseline prescription — working sets, rep range, week-1 target RIR (D-31, D-34) — reorderable via ▲▼, plus a searchable/filterable exercise picker reading the live exercise data. All personal data lives in the versioned root `{ version, activeProgramId, programs[] }` (D-33), saved to `localStorage` on every edit with an in-memory fallback + "preview — not saving" notice for Claude-project previews (§3 caveat); real JSON export/import operates on the whole root and auto-migrates the Phase-1 stub shape. **Validated** via a 30-assertion headless harness (boot/migration, library, meso/day/exercise CRUD, prescription clamping, array-position reorder, weeks/deload edits, legacy-shape migration, `localStorage` round-trip + restore + delete) plus a manual checklist (create/edit/reload/export–import round-trip, full live exercise list, dock shortcut). UI refinements from testing: widened prescription inputs (spinners removed) so multi-digit values aren't clipped, and a fixed-top/fixed-height picker so filtering doesn't resize or shift it. **Planning-UI enhancements deliberately parked as P-20** (supersets, program/mesocycle detail panel, minimal warmup representation).
 
 **Phase 3 — Muscle heatmap (top priority).**
-Body diagram with the 9 general areas; switch between Area / Group / Specific granularity; adjustable display threshold (R6). *Resolves:* **shading metric** (built to toggle set-count vs. intensity), and **6-vs-9 diagram rendering** (leaning 9). *Deliverable:* the visual imbalance view during planning.
+Body diagram with the 9 general areas; switch between Area / Group / Specific granularity; adjustable display threshold (R6). *Resolves:* **shading metric** (built to toggle set-count vs. intensity — the set-count path counts **working** sets only, R9, using the counts Phase 2 now captures), **6-vs-9 diagram rendering** (leaning 9), and is the trigger point for the **P-19 app-UI palette** decision (keep the chart-paper palette vs. re-theme to the aqua-on-ink brand). *Deliverable:* the visual imbalance view during planning.
 
 **Phase 4 — Volume & stimulus analysis.**
 Sets-per-muscle-per-week roll-ups; imbalance/under-/over-training flags; the **within-session freshness model** (first exercise = freshest). *Resolves:* freshness rule (position multiplier vs. running-fatigue counter) and fatigue-assignment formula. *Optionally introduces* RP volume landmarks (MEV/MAV/MRV) if wanted. *Deliverable:* objective per-week volume analysis.
 
 **Phase 5 — Tracking & logging.**
-Log weight / reps / RIR per set against the plan; progression charts across the mesocycle; plan-vs-actual comparison. *Resolves:* whether the planner *prescribes* next-session loads (the 6-week ramp auto-fill that the user can override); tempo as optional qualifier. *Deliverable:* the tracking experience.
+Log weight / reps / RIR per set against the plan; progression charts across the mesocycle; plan-vs-actual comparison. *Resolves:* whether the planner *prescribes* next-session loads (the ramp auto-fill that the user can override, P-08); tempo as optional qualifier (P-09); **per-set warmup vs. working marking** (P-21). *Deliverable:* the tracking experience.
 
 **Phase 6 — XP & gamification.**
 XP engine (leaning weight × reps × intensity), tracked per specific muscle and rolled up to group/area; **decay** tracked separately and summed (e.g. +4 over weeks, −1 for a week off); **projected XP as a range** built from planned ramp assumptions, shown during planning. *Resolves:* the XP formula and decay model. *Deliverable:* progress gamification + projected-gain preview.
@@ -312,6 +319,8 @@ A reusable, drift-resistant prompt + the 5-domain **coverage checklist** (below)
 The migrated seed is group-grain and carries several migration-era placeholders; this phase makes them real, using the Phase 7 workflow. Two parts:
 1. **Muscle-list refinement.** Split Rectus Abdominis → Upper / Lower (D-27, same regional convention as the obliques). Review `Function` assignments (incl. the P-18 "does it earn its keep" call, and Iliacus/Psoas). For each multi-head group currently inheriting one value (the four vasti are the prime case, also the glutes, hamstrings, traps, pec-major heads), **either differentiate the heads with head-specific scores or consciously consolidate** them if they never meaningfully diverge for these exercises — turning §4.5 placeholders into decisions.
 2. **Full re-analysis.** Re-run every exercise through the Phase 7 coverage-checklist at specific grain. This overwrites the group-grain seed *and* the Phase-0 migration judgment calls that were only ever provisional — the extensor-compartment fold (max-of-two), the oblique Upper/Lower direction, and every `Intensity_Source = Group` row. *Resolves:* **P-16**. *Deliverable:* a fully specific-grain, re-scored fact table.
+
+**Planning-enhancements pass (post-MVP, slot TBD — P-20).** Supersets, the program/mesocycle detail panel (focus + dates + description), and minimal warmup representation. Grouped as one coherent pass rather than piecemeal; exact placement in the roadmap to be assigned when the core loop (Phases 3–6) is closer to done.
 
 **Later / parked:** native iPhone app; auto cloud sync; SQLite generation; eccentric-emphasis contraction refinement; advanced fatigue/SFR dashboards.
 
@@ -362,21 +371,26 @@ Final check per omitted muscle: would fatigue there reduce performance, does it 
 | D-27 | Rectus Abdominis split | Split RA into Upper / Lower (regional, same convention as the obliques D-21). *Decided now; executed in Phase 8* alongside the re-analysis, so upper/lower values are assigned in one deliberate pass rather than duplicating the current single RA score. | 2026-07-10 |
 | D-28 | App name + icon | **LiftPlan** (working choice, "for now"), from the shortlist after pressure-testing (availability / logo / sound). Clean as an exact-string name; crowded lift-app field is the only downside (acceptable for single-user personal use). Icon = Roboto Slab Bold `LP` monogram, aqua `#31D3D0` on ink `#0F172A`; 1024×1024 master with rounded/transparent corners. `MesoQuest` reserved for the gamified tracking view (not the app). Revisit only if a stronger name emerges before the repo is created. *(Full rationale + rejected options archived in `docs/naming_and_icon_handoff.md`.)* | 2026-07-10 |
 | D-29 | Fact-table density labeling | Relabel the exercise–muscle table from "sparse" to **inclusive / dense** across the plan, to match the data (R1). No data or app change — a truth-in-labeling fix. Reflects that the migrated seed retains all involvement down to intensity `1` (D-09/R6) and is currently dense and uniform (the same ~50 of 55 muscles on every one of the 25 analyzed exercises; 74% of rows at intensity ≤3). Phase 8 resolves this into real per-exercise involvement. | 2026-07-10 |
-| D-30 | Repo ↔ Claude sync | Repo-to-Claude sync = direct web-fetch of the public repo raw URL (`.../refs/heads/main/PROJECT_PLAN.md`; confirmed working 2026-07-10). Read-only and one-directional: Claude reads the latest; plan edits are handed back as text for the user to commit. A GitHub connector (authenticated / write-capable) is optional and revisited only if the repo goes private or write-back is wanted. Governs the R8 workflow. | 2026-07-10 |
-| D-31 | Adding exercises = data-maintenance | Adding an exercise = repo data-maintenance (per R5), **not** an in-app action in v1. Two distinct jobs: an *entry* (one row in `exercises.csv`) vs. an *analysis* (fact-table rows: roles + 1–10 intensities). Interim additions before Phase 7 use the existing 5-domain coverage checklist at **group grain, provisional** (`Intensity_Source = Group`), matching the migrated seed; Phase 8 sweeps them into the full re-analysis. Phase 7 formalizes the repeatable pipeline. *Ingredients for a one-off analysis prompt (assemble on demand): the 5 coverage domains (§6), the `exercise_muscle` columns (§4.3), the group-grain + provisional rule, and the §5.2 validation checks.* | 2026-07-10 |
+| D-30 | Mesocycle structure model | Store **one week template** (the microcycle) once + a working-week count (`weeks`) + a `deload` flag; weeks 2..N and the deload week are **derived, not stored** (R3). The cross-week ramp (load/rep/set progression + RIR taper) is layered on in Phase 5 (P-08). E.g. `weeks:6, deload:true` = 6 working + 1 derived deload = 7 total. | 2026-07-10 |
+| D-31 | Phase-2 prescription grain | Each exercise entry stores `exerciseId` + a baseline prescription: **working**-set count (`sets`), rep range (`repRangeLow`/`repRangeHigh`), and `targetRIR`. Exercise **order = array position** — no stored `order` field (R3). Baseline = the week-1 anchor for the Phase-5 ramp; the set count feeds the Phase-3 heatmap set-count metric (P-01). | 2026-07-10 |
+| D-32 | Program library | Personal data holds a **library** of named programs (not a single program); exactly one is active via `activeProgramId`. | 2026-07-10 |
+| D-33 | Versioned personal-data root | All personal data lives in one top-level object `{ version, activeProgramId, programs[] }`, plus reserved `sessions[]` (Phase 5) and `xp.byMuscle` (Phase 6). `version` is a format-version integer for forward-migration. **Export/import operates on the whole object** (replaces the Phase-1 stub; auto-migrates the old `schemaVersion` shape). | 2026-07-10 |
+| D-34 | Planned effort metric = RIR | **RIR is the single stored planned-effort value.** RPE is derivable (`RPE ≈ 10 − RIR`) and display-only if ever surfaced — never stored (avoids dual-metric drift; RP is RIR-native). Per-exercise `targetRIR` is the **week-1 starting** target; the taper toward 0 across the block is derived by the Phase-5 ramp (P-08), where the primary week-to-week lever is added volume (sets) with RIR concurrently lowering to near-failure by the last working week. | 2026-07-11 |
+| D-35 | Warmup exclusion | **Warmups never count** toward volume, stimulus, fatigue, the heatmap, or XP — anywhere they appear (Rule **R9**). A planned prescription is working sets by definition; warmups carry no RIR. Warmup *representation* in the planner (a minimal per-exercise `warmupSets` count, no RIR, never counted) is parked to the planning-enhancements cluster (P-20); per-set warmup/working marking at **log** time is a Phase-5 concern (P-21). | 2026-07-11 |
+| D-36 | Program = macrocycle (no new nesting) | A **Program is the top planning container and serves as the macrocycle** (an ordered sequence of mesocycles); no separate Macrocycle entity is introduced (R3 — don't add a layer that isn't earning its keep for a solo lifter). Block/phase intent (base / hypertrophy / strength / peak / …) is expressed via a per-mesocycle **`focus`** field (parked, P-20), not a new hierarchy level. Revisit only if multiple *named* macrocycles within one program are ever needed. | 2026-07-11 |
 
 ### 7.2 Parked (decide in the noted phase)
 
 | # | Open decision | Resolve in | Notes |
 |---|---|---|---|
-| P-01 | Heatmap shading metric (set-count vs. intensity) | Phase 3 | Build to support both as a toggle |
+| P-01 | Heatmap shading metric (set-count vs. intensity) | Phase 3 | Build to support both as a toggle; the set-count path counts **working** sets only (R9) |
 | P-02 | 6-vs-9 diagram rendering | Phase 3 | Leaning 9 distinct zones; also decide the display label for the Lower back area (e.g. "Lower back" vs. "Core (lower back)") — cosmetic only |
 | P-03 | Intensity text-label cutoffs (which values → which labels) | Phase 3/5 | e.g. where High/Moderate/Low boundaries fall on 1–10 |
 | P-04 | Display threshold default (hide ≤1? ≤2? ≤3?) | Phase 3 | User-adjustable regardless |
 | P-05 | Within-session freshness model (position multiplier vs. running-fatigue counter) | Phase 4 | |
 | P-06 | Fatigue-assignment formula | Phase 4 | |
 | P-07 | RP volume landmarks (MEV/MAV/MRV) — include or not | Phase 4 | |
-| P-08 | Prescribed next-session loads (auto-fill 6-week ramp, user override) | Phase 5 | |
+| P-08 | Prescribed next-session loads (auto-fill ramp, user override) | Phase 5 | The derived week-to-week progression: set/volume ramp + RIR taper from the D-30 week-1 template |
 | P-09 | Tempo as optional logged qualifier | Phase 5 | |
 | P-10 | XP formula details (weight × reps × intensity?) + decay model | Phase 6 | |
 | P-11 | Native iPhone app | Later | Gym-side logging |
@@ -387,16 +401,16 @@ Final check per omitted muscle: would fatigue there reduce performance, does it 
 | P-17 | Exercise variant grouping / inheritance (`Canonical_Exercise_ID` self-reference) | Later | The unfinished "variant inheritance" idea from the handoff doc: let variants (e.g. Incline Bench DB vs BB) share one canonical movement so volume/heatmap math treats them sensibly. Distinct from the dedup rule (D-25). Possibly useful, not needed now. |
 | P-18 | Does `muscles.Function` earn its keep? | Phase 4 / 6 | Keep for now (distinct from `Muscle_Role`; the "which stabilizers fatigue?" goal wants it). Confirm a real consumer exists once the fatigue/XP model is built; drop if nothing uses it. |
 | P-19 | App-UI palette / brand-color direction | Phase 3 | Keep the Phase-1 clinical "chart-paper" UI palette (paper/slate/oxblood/steel) or re-theme the interior to the LiftPlan brand tokens — aqua `#31D3D0` on ink `#0F172A` (from D-28). Decide alongside the heatmap so the aqua accent and the warm heat-ramp are designed together (cool brand vs. warm data). Launcher/dock icon + `theme-color` are already on-brand; only the interior UI is open. |
+| P-20 | Planning-enhancements cluster | Post-MVP (slot TBD) | One coherent pass, not piecemeal: **(a) supersets** — a lightweight `supersetGroup` tag on exercise entries; adjacent same-tag entries form a rotation; order stays array position (D-31). **(b) Program/mesocycle detail panel** — per-mesocycle `focus` enum (Base / Hypertrophy / Strength / Peak / Maintenance / Mobility — finalize at build; carries the D-36 block intent), optional mesocycle `startDate` (end derived from weeks + deload), optional program `description`. **(c) Minimal warmup representation** — optional per-exercise `warmupSets` count, no RIR, excluded from all counting (R9). Slotted after the core loop (Phases 3–6) is closer to done. |
+| P-21 | Per-set warmup vs. working annotation (log-time) | Phase 5 | Strong-style per-set flag captured when logging a session (not planned set-by-set). Distinct from P-20(c) (planned warmups). Warmups excluded from counting (R9). |
 
 ---
 
 ## 8. Open Questions & Immediate Next Actions
 
-**Phases 0 and 1 are complete (2026-07-10).** The dataset is migrated/validated and the app skeleton is deployed and live on GitHub Pages (repo `liftplan`), installable as a Chrome dock app.
+**Phases 0, 1, and 2 are complete.** The dataset is migrated/validated; the app skeleton is deployed and live on GitHub Pages (repo `liftplan`), installable as a Chrome dock app; and the **planning core** (program → mesocycle → week template → day → ordered exercises) is built, persisted to browser storage, export/importable, and validated (30-assertion harness + manual checklist).
 
-**One-time (D-30) — Repo sync setup. ✓ Confirmed 2026-07-10.** Direct raw-URL web-fetch of `PROJECT_PLAN.md` tested and working; the raw URL lives in the project instructions + R8. This is process, **not** a build phase — no phase number. Standing habit going forward: (a) keep the repo copy current after each phase, and (b) open each phase-chat by telling Claude to fetch the latest plan from the repo.
-
-**Immediate next action (Phase 2 — Planning core):** build the program → mesocycle → week template → day → ordered-exercise-list structure and persist it to browser storage (capturing exercise *order* for the later freshness model). *To be started in a new chat within this project* — that chat should read this plan, name the phase explicitly, and note that browser-storage persistence must move from the Phase-1 in-memory/preview stub to real persistent storage on the deployed build (§3 development caveat).
+**Immediate next action (Phase 3 — Muscle heatmap, top priority):** a body diagram across the 9 general areas, with Area / Group / Specific granularity and an adjustable display threshold (R6). It resolves the **shading metric** (P-01 — counts *working* sets per R9, using the set counts Phase 2 now captures) and **6-vs-9 rendering** (P-02), and it's the trigger point for the **P-19 app-UI palette** decision (keep chart-paper vs. re-theme to the aqua-on-ink brand — design the cool brand accent and the warm heat-ramp together). *To be started in a new chat within this project* — that chat should fetch and read this plan first (R8) and name the phase explicitly.
 
 Everything else is either decided (§7.1) or correctly deferred to its build phase (§7.2).
 
@@ -405,10 +419,11 @@ Everything else is either decided (§7.1) or correctly deferred to its build pha
 ## 9. Glossary
 
 - **Mesocycle** — a repeated training week × N weeks + a deload week (per Renaissance Periodization).
-- **Macrocycle** — several mesocycles stacked into a longer block.
-- **Microcycle** — one week; here, the repeated week template within a mesocycle.
+- **Macrocycle** — several mesocycles stacked into a longer block; in LiftPlan a **Program** *is* the macrocycle (D-36).
+- **Microcycle** — one week; here, the repeated week template within a mesocycle (stored once; other weeks derived, D-30).
 - **Deload** — a lighter recovery week ending a mesocycle.
-- **RIR / RPE** — Reps In Reserve / Rate of Perceived Exertion; how many more reps could have been done. The logged effort measure (as in the Strong app).
+- **RIR / RPE** — Reps In Reserve / Rate of Perceived Exertion; how many more reps could have been done (`RPE ≈ 10 − RIR`). **RIR is the stored planning + logging effort metric** (D-34); RPE is derivable and display-only.
+- **Working set vs. warmup** — only **working** sets count toward volume / stimulus / fatigue / heatmap / XP (R9). Warmups are prep, carry no RIR, and are never counted.
 - **MEV / MAV / MRV** — Minimum Effective / Maximum Adaptive / Maximum Recoverable Volume; per-muscle weekly-volume landmarks (parked, P-07).
 - **SFR (stimulus-to-fatigue ratio)** — how much growth stimulus an exercise gives relative to the fatigue it costs.
 - **Effective set** — a set that meaningfully contributes stimulus to a target muscle.
