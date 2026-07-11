@@ -266,13 +266,15 @@
   .cfg { font-size:12px; color:var(--ink-2); display:flex; align-items:center; gap:8px; }
   .cfg.check { gap:6px; cursor:pointer; }
   .cfg.readout { margin-left:auto; color:var(--ink-3); }
-  .num-input, .rx { font-family:"IBM Plex Mono", monospace; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:6px; padding:5px 7px; width:58px; font-size:12.5px; }
+  .num-input, .rx { font-family:"IBM Plex Mono", monospace; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:6px; padding:5px 6px; width:58px; font-size:12.5px; -moz-appearance:textfield; appearance:textfield; }
+  .num-input::-webkit-outer-spin-button, .num-input::-webkit-inner-spin-button,
+  .rx::-webkit-outer-spin-button, .rx::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
   .rx { width:48px; text-align:center; }
-  .rx.sm { width:40px; }
+  .rx.sm { width:44px; }
   .num-input:focus, .rx:focus { outline:2px solid var(--steel); border-color:transparent; }
   .tpl-note { font-size:11.5px; color:var(--ink-3); margin:10px 2px 0; }
 
-  .day-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap:14px; margin-top:8px; }
+  .day-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(384px, 1fr)); gap:14px; margin-top:8px; }
   .day-card { border:1px solid var(--line); border-radius:10px; background:var(--paper); overflow:hidden; display:flex; flex-direction:column; }
   .day-head { display:flex; align-items:center; gap:6px; padding:8px 8px 8px 4px; background:var(--card); border-bottom:1px solid var(--line); }
   .day-tools { display:flex; align-items:center; gap:2px; margin-left:auto; flex:none; }
@@ -287,7 +289,7 @@
   .ex-main { flex:1; min-width:0; }
   .ex-name { font-size:13px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .ex-sub { font-size:10.5px; color:var(--ink-3); }
-  .ex-rx { display:flex; gap:9px; align-items:flex-end; flex:none; }
+  .ex-rx { display:flex; gap:8px; align-items:flex-end; flex:none; }
   .ex-rx label { font-size:9px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); display:flex; flex-direction:column; gap:3px; align-items:center; }
   .rep-range { display:flex; align-items:center; gap:3px; }
   .rep-range i { color:var(--ink-3); font-style:normal; }
@@ -306,14 +308,14 @@
   .modal-root { display:none; position:fixed; inset:0; z-index:60; }
   .modal-root.show { display:block; }
   .modal-backdrop { position:absolute; inset:0; background:rgba(15,23,42,.42); }
-  .modal-card { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:min(560px, 92vw); max-height:82vh; background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 60px rgba(15,23,42,.28); display:flex; flex-direction:column; overflow:hidden; }
+  .modal-card { position:absolute; top:7vh; left:50%; transform:translateX(-50%); width:min(560px, 92vw); height:min(620px, 84vh); background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 60px rgba(15,23,42,.28); display:flex; flex-direction:column; overflow:hidden; }
   .modal-head { display:flex; align-items:flex-start; justify-content:space-between; padding:16px 18px 10px; }
   .mh-title { font-family:"Space Grotesk", sans-serif; font-weight:600; font-size:16px; }
   .mh-sub { font-size:12px; color:var(--ink-3); margin-top:2px; }
   .modal-tools { padding:0 18px 12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid var(--line); }
   .search.inline { margin:0; }
   .search.inline input { width:100%; padding-left:12px; }
-  .picker-list { overflow-y:auto; padding:6px 8px; }
+  .picker-list { flex:1; min-height:0; overflow-y:auto; padding:6px 8px; }
   .pick-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 12px; border-radius:8px; cursor:pointer; }
   .pick-row:hover { background:var(--paper); }
   .pr-name { font-size:13px; font-weight:500; }
@@ -1081,7 +1083,7 @@ function mesoEditorHTML(m) {
       <label class="cfg check"><input type="checkbox" ${m.deload ? "checked" : ""} onchange="planToggleDeload(this.checked)" /> Deload week</label>
       <div class="cfg readout mono">${m.weeks} working${m.deload ? " + 1 deload" : ""} = ${total} week${total === 1 ? "" : "s"}</div>
     </div>
-    <div class="tpl-note">One week template, repeated ${m.weeks}×${m.deload ? " + a deload week" : ""}. Week-to-week progression (the ramp) is layered on in a later phase.</div>
+    <div class="tpl-note">One week template, repeated ${m.weeks}×${m.deload ? " + a deload week" : ""}. Sets are working sets; RIR is the week-1 starting target. Week-to-week progression — adding sets and lowering RIR toward 0 — is layered on in a later phase.</div>
 
     <div class="section-h" style="margin-top:22px"><span>Week template</span><button class="btn sm" onclick="planAddDay()">+ Add day</button></div>
     <div class="day-grid">
@@ -1107,7 +1109,7 @@ function dayCardHTML(d, di, count) {
       <div class="ex-rx">
         <label>Sets<input type="number" min="1" max="20" value="${ex.sets}" class="rx" onchange="planSetRx('${d.id}',${idx},'sets',this.value)" /></label>
         <label>Reps<span class="rep-range"><input type="number" min="1" max="100" value="${ex.repRangeLow}" class="rx sm" onchange="planSetRx('${d.id}',${idx},'repRangeLow',this.value)" /><i>–</i><input type="number" min="1" max="100" value="${ex.repRangeHigh}" class="rx sm" onchange="planSetRx('${d.id}',${idx},'repRangeHigh',this.value)" /></span></label>
-        <label>RIR<input type="number" min="0" max="10" value="${ex.targetRIR}" class="rx" onchange="planSetRx('${d.id}',${idx},'targetRIR',this.value)" /></label>
+        <label title="Week-1 target RIR — tapers toward 0 across the block (progression added in a later phase)">RIR<input type="number" min="0" max="10" value="${ex.targetRIR}" class="rx" onchange="planSetRx('${d.id}',${idx},'targetRIR',this.value)" /></label>
       </div>
       <button class="ex-del" title="Remove exercise" onclick="planRemoveExercise('${d.id}',${idx})">✕</button>
     </div>`;
