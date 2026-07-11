@@ -223,11 +223,110 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* ---------- Planner (Phase 2) ---------- */
+  .planner { padding: 22px 28px 40px; overflow-y: auto; height: 100%; }
+  .prog-bar { display:flex; align-items:center; gap:12px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); margin-bottom:18px; }
+  .prog-bar .pb-label { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-3); flex:none; }
+  .prog-pills { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+  .prog-pill { border:1px solid var(--line); background:var(--paper); color:var(--ink-2); padding:5px 12px; border-radius:20px; font-size:12.5px; cursor:pointer; font-weight:500; }
+  .prog-pill:hover { border-color:var(--steel); color:var(--ink); }
+  .prog-pill.on { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .muted { color:var(--ink-3); }
+
+  .btn { border:0; background:var(--ink); color:#fff; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; }
+  .btn:hover { background:#2a2f38; }
+  .btn.sm { padding:6px 11px; font-size:12px; }
+  .btn-ghost { border:1px solid var(--line); background:var(--card); color:var(--ink-2); padding:7px 12px; border-radius:8px; font-size:12.5px; cursor:pointer; }
+  .btn-ghost:hover { border-color:var(--steel); color:var(--ink); }
+  .btn-ghost.sm { padding:5px 10px; font-size:11.5px; }
+  .btn-ghost.danger { color:var(--bad); }
+  .btn-ghost.danger:hover { border-color:var(--bad); background:rgba(178,58,50,.06); }
+
+  .plan-cols { display:grid; grid-template-columns: 240px 1fr; gap:20px; align-items:start; }
+  .plan-outline { border:1px solid var(--line); border-radius:10px; background:var(--card); padding:14px; }
+  .po-head { display:flex; align-items:center; justify-content:space-between; font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-3); margin-bottom:8px; }
+  .icon-add { border:1px solid var(--line); background:var(--paper); color:var(--ink-2); width:22px; height:22px; border-radius:6px; cursor:pointer; font-size:14px; line-height:1; }
+  .icon-add:hover { border-color:var(--steel); color:var(--ink); }
+  .po-actions { margin:8px 0 4px; }
+  .meso-list { display:flex; flex-direction:column; gap:6px; }
+  .meso-item { text-align:left; border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:9px 11px; cursor:pointer; display:flex; flex-direction:column; gap:2px; }
+  .meso-item:hover { border-color:var(--steel); }
+  .meso-item.sel { background:#fff; box-shadow: inset 3px 0 0 var(--muscle); }
+  .mi-name { font-weight:600; font-size:13px; color:var(--ink); }
+  .mi-meta { font-size:11px; color:var(--ink-3); }
+
+  .plan-editor { min-width:0; }
+  .name-input { font-family:"Space Grotesk", sans-serif; font-weight:600; border:1px solid transparent; background:transparent; color:var(--ink); font-size:15px; padding:4px 6px; border-radius:6px; width:100%; letter-spacing:-.01em; }
+  .name-input:hover { border-color:var(--line); }
+  .name-input:focus { outline:2px solid var(--steel); border-color:transparent; background:var(--card); }
+  .name-input.big { font-size:20px; }
+
+  .meso-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .meso-config { display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+  .cfg { font-size:12px; color:var(--ink-2); display:flex; align-items:center; gap:8px; }
+  .cfg.check { gap:6px; cursor:pointer; }
+  .cfg.readout { margin-left:auto; color:var(--ink-3); }
+  .num-input, .rx { font-family:"IBM Plex Mono", monospace; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:6px; padding:5px 7px; width:58px; font-size:12.5px; }
+  .rx { width:48px; text-align:center; }
+  .rx.sm { width:40px; }
+  .num-input:focus, .rx:focus { outline:2px solid var(--steel); border-color:transparent; }
+  .tpl-note { font-size:11.5px; color:var(--ink-3); margin:10px 2px 0; }
+
+  .day-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap:14px; margin-top:8px; }
+  .day-card { border:1px solid var(--line); border-radius:10px; background:var(--paper); overflow:hidden; display:flex; flex-direction:column; }
+  .day-head { display:flex; align-items:center; gap:6px; padding:8px 8px 8px 4px; background:var(--card); border-bottom:1px solid var(--line); }
+  .day-tools { display:flex; align-items:center; gap:2px; margin-left:auto; flex:none; }
+  .ex-list { display:flex; flex-direction:column; }
+  .ex-row { display:flex; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid var(--line-2); }
+  .ex-row:last-child { border-bottom:0; }
+  .ex-ord { display:flex; flex-direction:column; align-items:center; gap:1px; flex:none; }
+  .ord-btn { border:0; background:transparent; color:var(--ink-3); cursor:pointer; font-size:9px; line-height:1; padding:1px 2px; }
+  .ord-btn:hover:not(:disabled) { color:var(--ink); }
+  .ord-btn:disabled { opacity:.25; cursor:default; }
+  .ord-n { font-size:11px; color:var(--ink-2); font-weight:600; }
+  .ex-main { flex:1; min-width:0; }
+  .ex-name { font-size:13px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ex-sub { font-size:10.5px; color:var(--ink-3); }
+  .ex-rx { display:flex; gap:9px; align-items:flex-end; flex:none; }
+  .ex-rx label { font-size:9px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); display:flex; flex-direction:column; gap:3px; align-items:center; }
+  .rep-range { display:flex; align-items:center; gap:3px; }
+  .rep-range i { color:var(--ink-3); font-style:normal; }
+  .ex-del { border:0; background:transparent; color:var(--ink-3); cursor:pointer; font-size:13px; padding:3px 5px; border-radius:5px; flex:none; }
+  .ex-del:hover { color:var(--bad); background:rgba(178,58,50,.08); }
+  .ex-empty { padding:14px; font-size:12px; color:var(--ink-3); text-align:center; }
+  .add-ex { border:0; border-top:1px dashed var(--line); background:transparent; color:var(--steel); padding:9px; cursor:pointer; font-size:12.5px; font-weight:500; width:100%; }
+  .add-ex:hover { background:var(--card); }
+
+  .plan-foot { margin-top:22px; padding-top:14px; border-top:1px solid var(--line-2); }
+  .persist { font-size:11.5px; display:inline-flex; align-items:center; gap:6px; }
+  .persist.ok { color:var(--good); }
+  .persist.warn { color:var(--warn); }
+
+  /* modal / exercise picker */
+  .modal-root { display:none; position:fixed; inset:0; z-index:60; }
+  .modal-root.show { display:block; }
+  .modal-backdrop { position:absolute; inset:0; background:rgba(15,23,42,.42); }
+  .modal-card { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:min(560px, 92vw); max-height:82vh; background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 60px rgba(15,23,42,.28); display:flex; flex-direction:column; overflow:hidden; }
+  .modal-head { display:flex; align-items:flex-start; justify-content:space-between; padding:16px 18px 10px; }
+  .mh-title { font-family:"Space Grotesk", sans-serif; font-weight:600; font-size:16px; }
+  .mh-sub { font-size:12px; color:var(--ink-3); margin-top:2px; }
+  .modal-tools { padding:0 18px 12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid var(--line); }
+  .search.inline { margin:0; }
+  .search.inline input { width:100%; padding-left:12px; }
+  .picker-list { overflow-y:auto; padding:6px 8px; }
+  .pick-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 12px; border-radius:8px; cursor:pointer; }
+  .pick-row:hover { background:var(--paper); }
+  .pr-name { font-size:13px; font-weight:500; }
+  .pr-sub { font-size:10.5px; color:var(--ink-3); }
+  .pr-add { font-size:12px; color:var(--steel); font-weight:600; flex:none; }
+  .modal-foot { display:flex; align-items:center; justify-content:space-between; padding:12px 18px; border-top:1px solid var(--line); }
+
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
   @media (max-width: 720px) {
     .app { grid-template-columns: 1fr; }
     .rail { flex-direction: row; overflow-x: auto; }
     .pane-body.split { grid-template-columns: 1fr; }
+    .plan-cols { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -245,8 +344,13 @@
     </div>
 
     <nav class="nav">
-      <div class="nav-label">Databases</div>
-      <button class="nav-btn active" data-view="exercises">
+      <div class="nav-label">Planning</div>
+      <button class="nav-btn active" data-view="plan">
+        <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9h16M8 3v4M16 3v4M8 13h4M8 16.5h6" stroke-linecap="round"/></svg>
+        Plan <span class="count" id="cPlan"></span>
+      </button>
+      <div class="nav-label" style="margin-top:6px">Databases</div>
+      <button class="nav-btn" data-view="exercises">
         <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 6.5h11M6.5 12h11M6.5 17.5h11" stroke-linecap="round"/><circle cx="3.5" cy="6.5" r="1.3"/><circle cx="3.5" cy="12" r="1.3"/><circle cx="3.5" cy="17.5" r="1.3"/></svg>
         Exercises <span class="count" id="cExercises"></span>
       </button>
@@ -300,6 +404,7 @@
   </main>
 </div>
 <div class="toast" id="toast"></div>
+<div class="modal-root" id="modalRoot"></div>
 
 <script>
 /* ============================================================
@@ -356,12 +461,16 @@ function parseCSV(text) {
 const DB = {};                 // parsed tables
 const IX = {};                 // indexes
 let DATA_SOURCE = "live";      // "live" | "embedded"
-let PERSONAL = { app: APP_NAME, schemaVersion: 1, exportedAt: null, programs: [], sessions: [], xp: { byMuscle: {} } };
+let PERSONAL = { app: APP_NAME, version: 1, activeProgramId: null, exportedAt: null, programs: [], sessions: [], xp: { byMuscle: {} } };
 
-let currentView = "exercises";
+let currentView = "plan";
 let selected = { exercises: null, muscles: null };
 let searchQ = "";
 let activeFilters = { exercises: new Set(), muscles: new Set() };
+let planSel = { mesoId: null };
+let pickerDayId = null, pickerSearch = "", pickerFilters = new Set();
+const STORAGE_KEY = "liftplan.personal.v1";
+let PERSISTENCE = "local";   // "local" | "memory"
 
 /* ---------- load ---------- */
 async function loadTable(name) {
@@ -379,7 +488,7 @@ async function boot() {
   document.title = APP_NAME;
   document.getElementById("brandName").textContent = APP_NAME;
   document.getElementById("brandTag").textContent = APP_TAGLINE;
-  PERSONAL.app = APP_NAME;
+  loadPersonal();
 
   let anyEmbedded = false, ok = true;
   for (const t of TABLES) {
@@ -408,6 +517,7 @@ async function boot() {
   set("cExercises", DB.exercises.length);
   set("cMuscles", DB.muscles.length);
   set("cStructure", DB.general_areas.length + " areas");
+  setPlanCount();
   const v = validate();
   set("cHealth", (v.fails ? v.fails + " ⚠" : "OK"));
   document.getElementById("cHealth").style.color = v.fails ? "#E4B4AC" : "#7A828F";
@@ -462,8 +572,10 @@ function wireChrome() {
 /* ---------- render orchestration ---------- */
 function render() {
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.view === currentView));
-  const titles = { exercises:"Exercises", muscles:"Muscles", structure:"Structure", health:"Data health" };
+  const titles = { plan:"Plan", exercises:"Exercises", muscles:"Muscles", structure:"Structure", health:"Data health" };
+  const ap = activeProgram();
   const subs = {
+    plan: PERSONAL.programs.length ? `${PERSONAL.programs.length} program${PERSONAL.programs.length===1?'':'s'} · active: ${ap ? ap.name : '—'}` : "Build a program → mesocycle → week template → days",
     exercises: `${DB.exercises.length} exercises · ${Object.keys(IX.emByEx).length} analyzed`,
     muscles: `${DB.muscles.length} specific muscles · ${DB.muscle_groups.length} groups · ${DB.general_areas.length} areas`,
     structure: "The reference skeleton: areas → groups → muscles",
@@ -476,13 +588,15 @@ function render() {
   const filters = document.getElementById("filters");
   filters.innerHTML = "";
 
-  if (currentView === "structure" || currentView === "health") {
+  if (currentView === "structure" || currentView === "health" || currentView === "plan") {
     body.classList.remove("split");
     searchWrap.style.display = currentView === "structure" ? "block" : "none";
     document.getElementById("listCol").style.display = "none";
     const dc = document.getElementById("detailCol");
     dc.style.gridColumn = "1 / -1";
-    dc.innerHTML = currentView === "structure" ? structureHTML() : healthHTML();
+    dc.innerHTML = currentView === "structure" ? structureHTML()
+                 : currentView === "health"   ? healthHTML()
+                 : plannerHTML();
     if (currentView === "structure") wireStructureSearch();
     return;
   }
@@ -784,15 +898,297 @@ function healthHTML() {
   </div>`;
 }
 
-/* ---------- export / import (Phase 1 stub) ---------- */
+/* ========================================================================
+   PHASE 2 — Planning core
+   Personal data root (D-33): { version, activeProgramId, programs[] }
+   + reserved sessions[] (Phase 5) and xp.byMuscle (Phase 6).
+   Persisted to localStorage; falls back to in-memory (preview) with a notice.
+   ======================================================================== */
+
+/* ---------- persistence ---------- */
+function migratePersonal(o) {
+  o = (o && typeof o === "object") ? o : {};
+  if ("schemaVersion" in o && !("version" in o)) o.version = o.schemaVersion;  // legacy stub → D-33
+  delete o.schemaVersion;
+  o.version = o.version || 1;
+  o.app = APP_NAME;
+  o.programs = Array.isArray(o.programs) ? o.programs : [];
+  o.sessions = Array.isArray(o.sessions) ? o.sessions : [];        // reserved: Phase 5
+  o.xp = (o.xp && o.xp.byMuscle) ? o.xp : { byMuscle: {} };         // reserved: Phase 6
+  // normalise the active-program pointer so it always points at a real program
+  if (!("activeProgramId" in o)) o.activeProgramId = null;
+  if (o.activeProgramId && !o.programs.some(p => p.id === o.activeProgramId)) o.activeProgramId = null;
+  if (!o.activeProgramId && o.programs[0]) o.activeProgramId = o.programs[0].id;
+  return o;
+}
+function storageAvailable() {
+  try { const k = "__lp_test__"; localStorage.setItem(k, "1"); localStorage.removeItem(k); return true; }
+  catch (e) { return false; }
+}
+function loadPersonal() {
+  if (!storageAvailable()) { PERSISTENCE = "memory"; PERSONAL = migratePersonal(PERSONAL); return; }
+  PERSISTENCE = "local";
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    PERSONAL = migratePersonal(raw ? JSON.parse(raw) : PERSONAL);
+  } catch (e) { PERSONAL = migratePersonal(PERSONAL); }
+}
+function savePersonal() {
+  PERSONAL.app = APP_NAME;
+  setPlanCount();
+  if (PERSISTENCE !== "local") return false;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(PERSONAL)); return true; }
+  catch (e) { PERSISTENCE = "memory"; return false; }
+}
+function setPlanCount() { const el = document.getElementById("cPlan"); if (el) el.textContent = PERSONAL.programs.length || ""; }
+function uid(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+/* ---------- planner model ---------- */
+function activeProgram() { return PERSONAL.programs.find(p => p.id === PERSONAL.activeProgramId) || null; }
+function findMeso(prog, id) { return prog ? (prog.mesocycles || []).find(m => m.id === id) : null; }
+function currentMeso() {
+  const p = activeProgram(); if (!p) return null;
+  let m = findMeso(p, planSel.mesoId);
+  if (!m) m = p.mesocycles[0] || null;
+  planSel.mesoId = m ? m.id : null;
+  return m;
+}
+function findDay(meso, id) { return meso ? meso.microcycle.days.find(d => d.id === id) : null; }
+
+function starterMeso(n) { return { id: uid("meso_"), name: "Mesocycle " + n, weeks: 6, deload: true, microcycle: { days: [ { id: uid("day_"), name: "Day 1", exercises: [] } ] } }; }
+
+function planNewProgram() {
+  const p = { id: uid("prog_"), name: "New Program", createdAt: new Date().toISOString().slice(0, 10), mesocycles: [ starterMeso(1) ] };
+  PERSONAL.programs.push(p);
+  PERSONAL.activeProgramId = p.id;
+  planSel.mesoId = p.mesocycles[0].id;
+  savePersonal(); render();
+}
+function planSetActive(id) { PERSONAL.activeProgramId = id; planSel.mesoId = null; savePersonal(); render(); }
+function planRenameProgram(v) { const p = activeProgram(); if (p) { p.name = (v.trim() || p.name); savePersonal(); render(); } }
+function planDeleteProgram() {
+  const p = activeProgram(); if (!p) return;
+  if (!confirm(`Delete program "${p.name}"? This can't be undone.`)) return;
+  PERSONAL.programs = PERSONAL.programs.filter(x => x.id !== p.id);
+  PERSONAL.activeProgramId = PERSONAL.programs[0]?.id || null;
+  planSel.mesoId = null; savePersonal(); render();
+}
+
+function planAddMeso() {
+  const p = activeProgram(); if (!p) return;
+  const m = starterMeso(p.mesocycles.length + 1);
+  p.mesocycles.push(m); planSel.mesoId = m.id; savePersonal(); render();
+}
+function planSelectMeso(id) { planSel.mesoId = id; render(); }
+function planRenameMeso(v) { const m = currentMeso(); if (m) { m.name = (v.trim() || m.name); savePersonal(); render(); } }
+function planSetWeeks(v) { const m = currentMeso(); if (m) { let n = parseInt(v, 10); if (isNaN(n)) n = 1; m.weeks = Math.max(1, Math.min(24, n)); savePersonal(); render(); } }
+function planToggleDeload(on) { const m = currentMeso(); if (m) { m.deload = !!on; savePersonal(); render(); } }
+function planDeleteMeso() {
+  const p = activeProgram(), m = currentMeso(); if (!p || !m) return;
+  if (!confirm(`Delete mesocycle "${m.name}"?`)) return;
+  p.mesocycles = p.mesocycles.filter(x => x.id !== m.id);
+  planSel.mesoId = p.mesocycles[0]?.id || null; savePersonal(); render();
+}
+
+function planAddDay() { const m = currentMeso(); if (!m) return; m.microcycle.days.push({ id: uid("day_"), name: "Day " + (m.microcycle.days.length + 1), exercises: [] }); savePersonal(); render(); }
+function planRenameDay(dayId, v) { const d = findDay(currentMeso(), dayId); if (d) { d.name = (v.trim() || d.name); savePersonal(); } }
+function planMoveDay(dayId, dir) {
+  const m = currentMeso(); const arr = m.microcycle.days; const i = arr.findIndex(d => d.id === dayId); const j = i + dir;
+  if (i < 0 || j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; savePersonal(); render();
+}
+function planDeleteDay(dayId) { const m = currentMeso(); if (!confirm("Remove this day?")) return; m.microcycle.days = m.microcycle.days.filter(d => d.id !== dayId); savePersonal(); render(); }
+
+function planAddExercise(dayId, exId) { const d = findDay(currentMeso(), dayId); if (!d) return; d.exercises.push({ exerciseId: exId, sets: 3, repRangeLow: 8, repRangeHigh: 12, targetRIR: 2 }); savePersonal(); }
+function planMoveExercise(dayId, idx, dir) {
+  const d = findDay(currentMeso(), dayId); const arr = d.exercises; const j = idx + dir;
+  if (j < 0 || j >= arr.length) return; [arr[idx], arr[j]] = [arr[j], arr[idx]]; savePersonal(); render();
+}
+function planRemoveExercise(dayId, idx) { const d = findDay(currentMeso(), dayId); d.exercises.splice(idx, 1); savePersonal(); render(); }
+function planSetRx(dayId, idx, field, val) {
+  const ex = findDay(currentMeso(), dayId)?.exercises[idx]; if (!ex) return;
+  let n = parseInt(val, 10); if (isNaN(n)) n = 0;
+  if (field === "sets") ex.sets = Math.max(1, Math.min(20, n));
+  else if (field === "repRangeLow") ex.repRangeLow = Math.max(1, Math.min(100, n));
+  else if (field === "repRangeHigh") ex.repRangeHigh = Math.max(1, Math.min(100, n));
+  else if (field === "targetRIR") ex.targetRIR = Math.max(0, Math.min(10, n));
+  savePersonal();   // value already shown in the field — no re-render (keeps focus)
+}
+
+/* ---------- planner view ---------- */
+function plannerHTML() {
+  const persist = PERSISTENCE === "local"
+    ? `<span class="persist ok">● Saved to this browser</span>`
+    : `<span class="persist warn">● Preview mode — changes are not being saved. Use Export to keep your plan.</span>`;
+
+  if (!PERSONAL.programs.length) {
+    return `<div class="planner">
+      ${plannerBar()}
+      <div class="empty" style="padding:70px 30px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9h16M8 3v4M16 3v4" stroke-linecap="round"/></svg>
+        <div style="font-size:15px;color:var(--ink-2);margin-bottom:4px">No programs yet</div>
+        <div style="margin-bottom:18px">Create a program to start building a mesocycle and its week template.</div>
+        <button class="btn" onclick="planNewProgram()">+ New program</button>
+      </div>
+      <div class="plan-foot">${persist}</div>
+    </div>`;
+  }
+
+  const p = activeProgram(), m = currentMeso();
+  return `<div class="planner">
+    ${plannerBar()}
+    <div class="plan-cols">
+      <aside class="plan-outline">
+        <div class="po-head"><span>Program</span></div>
+        <input class="name-input" value="${esc(p.name)}" onchange="planRenameProgram(this.value)" aria-label="Program name" />
+        <div class="po-actions"><button class="btn-ghost sm danger" onclick="planDeleteProgram()">Delete program</button></div>
+        <div class="po-head" style="margin-top:18px"><span>Mesocycles</span><button class="icon-add" title="Add mesocycle" onclick="planAddMeso()">+</button></div>
+        <div class="meso-list">
+          ${p.mesocycles.map(ms => `
+            <button class="meso-item ${m && ms.id === m.id ? "sel" : ""}" onclick="planSelectMeso('${ms.id}')">
+              <span class="mi-name">${esc(ms.name)}</span>
+              <span class="mi-meta mono">${ms.weeks}${ms.deload ? "+1" : ""} wk · ${ms.microcycle.days.length} day${ms.microcycle.days.length === 1 ? "" : "s"}</span>
+            </button>`).join("")}
+        </div>
+      </aside>
+      <section class="plan-editor">
+        ${m ? mesoEditorHTML(m) : `<div class="empty" style="padding:60px">No mesocycle selected.</div>`}
+      </section>
+    </div>
+    <div class="plan-foot">${persist}</div>
+  </div>`;
+}
+function plannerBar() {
+  const pills = PERSONAL.programs.map(p =>
+    `<button class="prog-pill ${p.id === PERSONAL.activeProgramId ? "on" : ""}" onclick="planSetActive('${p.id}')">${esc(p.name)}</button>`).join("");
+  return `<div class="prog-bar">
+    <span class="pb-label">Programs</span>
+    <div class="prog-pills">${pills || '<span class="muted">none yet</span>'}</div>
+    <button class="btn sm" onclick="planNewProgram()">+ New program</button>
+  </div>`;
+}
+function mesoEditorHTML(m) {
+  const total = m.weeks + (m.deload ? 1 : 0);
+  const days = m.microcycle.days;
+  return `
+    <div class="meso-head">
+      <input class="name-input big" value="${esc(m.name)}" onchange="planRenameMeso(this.value)" aria-label="Mesocycle name" />
+      <button class="btn-ghost sm danger" onclick="planDeleteMeso()">Delete</button>
+    </div>
+    <div class="meso-config">
+      <label class="cfg">Working weeks
+        <input type="number" min="1" max="24" value="${m.weeks}" class="num-input" onchange="planSetWeeks(this.value)" />
+      </label>
+      <label class="cfg check"><input type="checkbox" ${m.deload ? "checked" : ""} onchange="planToggleDeload(this.checked)" /> Deload week</label>
+      <div class="cfg readout mono">${m.weeks} working${m.deload ? " + 1 deload" : ""} = ${total} week${total === 1 ? "" : "s"}</div>
+    </div>
+    <div class="tpl-note">One week template, repeated ${m.weeks}×${m.deload ? " + a deload week" : ""}. Week-to-week progression (the ramp) is layered on in a later phase.</div>
+
+    <div class="section-h" style="margin-top:22px"><span>Week template</span><button class="btn sm" onclick="planAddDay()">+ Add day</button></div>
+    <div class="day-grid">
+      ${days.map((d, di) => dayCardHTML(d, di, days.length)).join("")}
+      ${days.length === 0 ? `<div class="empty" style="padding:30px">No days yet — add a training day.</div>` : ""}
+    </div>`;
+}
+function dayCardHTML(d, di, count) {
+  const rows = d.exercises.map((ex, idx) => {
+    const meta = IX.exById[ex.exerciseId];
+    const name = meta ? meta.Exercise_Name : ex.exerciseId;
+    const cat = meta ? meta.Category : "";
+    return `<div class="ex-row">
+      <div class="ex-ord">
+        <button class="ord-btn" ${idx === 0 ? "disabled" : ""} title="Move up" onclick="planMoveExercise('${d.id}',${idx},-1)">▲</button>
+        <span class="ord-n mono">${idx + 1}</span>
+        <button class="ord-btn" ${idx === d.exercises.length - 1 ? "disabled" : ""} title="Move down" onclick="planMoveExercise('${d.id}',${idx},1)">▼</button>
+      </div>
+      <div class="ex-main">
+        <div class="ex-name" title="${esc(name)}">${esc(name)}</div>
+        <div class="ex-sub mono">${esc(ex.exerciseId)}${cat ? " · " + cat : ""}</div>
+      </div>
+      <div class="ex-rx">
+        <label>Sets<input type="number" min="1" max="20" value="${ex.sets}" class="rx" onchange="planSetRx('${d.id}',${idx},'sets',this.value)" /></label>
+        <label>Reps<span class="rep-range"><input type="number" min="1" max="100" value="${ex.repRangeLow}" class="rx sm" onchange="planSetRx('${d.id}',${idx},'repRangeLow',this.value)" /><i>–</i><input type="number" min="1" max="100" value="${ex.repRangeHigh}" class="rx sm" onchange="planSetRx('${d.id}',${idx},'repRangeHigh',this.value)" /></span></label>
+        <label>RIR<input type="number" min="0" max="10" value="${ex.targetRIR}" class="rx" onchange="planSetRx('${d.id}',${idx},'targetRIR',this.value)" /></label>
+      </div>
+      <button class="ex-del" title="Remove exercise" onclick="planRemoveExercise('${d.id}',${idx})">✕</button>
+    </div>`;
+  }).join("");
+  return `<div class="day-card">
+    <div class="day-head">
+      <input class="name-input" value="${esc(d.name)}" onchange="planRenameDay('${d.id}',this.value)" aria-label="Day name" />
+      <div class="day-tools">
+        <button class="ord-btn" ${di === 0 ? "disabled" : ""} title="Move day up" onclick="planMoveDay('${d.id}',-1)">▲</button>
+        <button class="ord-btn" ${di === count - 1 ? "disabled" : ""} title="Move day down" onclick="planMoveDay('${d.id}',1)">▼</button>
+        <button class="ex-del" title="Delete day" onclick="planDeleteDay('${d.id}')">✕</button>
+      </div>
+    </div>
+    <div class="ex-list">${rows || `<div class="ex-empty">No exercises yet.</div>`}</div>
+    <button class="add-ex" onclick="openPicker('${d.id}')">+ Add exercise</button>
+  </div>`;
+}
+
+/* ---------- exercise picker (modal) ---------- */
+function openPicker(dayId) { pickerDayId = dayId; pickerSearch = ""; renderPicker(); document.getElementById("modalRoot").classList.add("show"); }
+function closePicker() { document.getElementById("modalRoot").classList.remove("show"); pickerDayId = null; }
+function renderPicker() { document.getElementById("modalRoot").innerHTML = pickerHTML(); wirePicker(); }
+function renderPickerList() { document.getElementById("pickerList").innerHTML = pickerListHTML(); wirePickerRows(); updatePickerCount(); }
+function pickerHTML() {
+  const d = findDay(currentMeso(), pickerDayId);
+  return `<div class="modal-backdrop" onclick="closePicker()"></div>
+    <div class="modal-card" role="dialog" aria-label="Add exercise">
+      <div class="modal-head">
+        <div><div class="mh-title">Add exercise</div><div class="mh-sub">to ${d ? esc(d.name) : ""}</div></div>
+        <button class="ex-del" title="Close" onclick="closePicker()">✕</button>
+      </div>
+      <div class="modal-tools">
+        <div class="search inline"><input id="pickerSearchInput" placeholder="Search exercises…" autocomplete="off" value="${esc(pickerSearch)}" /></div>
+        <div class="filters" id="pickerChips">
+          ${["Active", "Compound", "Isolation"].map(l => `<button class="chip ${pickerFilters.has(l) ? "on" : ""}" data-f="${l}">${l}</button>`).join("")}
+        </div>
+      </div>
+      <div class="picker-list" id="pickerList">${pickerListHTML()}</div>
+      <div class="modal-foot"><span class="muted mono" id="pickerCount"></span><button class="btn sm" onclick="closePicker()">Done</button></div>
+    </div>`;
+}
+function pickerListHTML() {
+  let list = (DB.exercises || []).slice().sort((a, b) => a.Exercise_Name.localeCompare(b.Exercise_Name));
+  const q = pickerSearch.toLowerCase();
+  if (q) list = list.filter(e => (e.Exercise_Name + " " + e.Exercise_ID).toLowerCase().includes(q));
+  if (pickerFilters.has("Active")) list = list.filter(e => e.Active === "True");
+  if (pickerFilters.has("Compound")) list = list.filter(e => e.Category === "Compound");
+  if (pickerFilters.has("Isolation")) list = list.filter(e => e.Category === "Isolation");
+  if (!list.length) return `<div class="ex-empty" style="padding:24px">No matches.</div>`;
+  return list.map(e => `<div class="pick-row" data-id="${e.Exercise_ID}">
+      <div><div class="pr-name">${esc(e.Exercise_Name)}</div>
+        <div class="pr-sub mono">${e.Exercise_ID}${e.Category ? " · " + e.Category : ""}${e.Equipment ? " · " + e.Equipment : ""}</div></div>
+      <span class="pr-add">+ Add</span>
+    </div>`).join("");
+}
+function wirePicker() {
+  const s = document.getElementById("pickerSearchInput");
+  if (s) { s.oninput = e => { pickerSearch = e.target.value; renderPickerList(); }; s.focus(); }
+  document.querySelectorAll("#pickerChips .chip").forEach(c => {
+    c.onclick = () => { const f = c.dataset.f; pickerFilters.has(f) ? pickerFilters.delete(f) : pickerFilters.add(f); c.classList.toggle("on"); renderPickerList(); };
+  });
+  wirePickerRows(); updatePickerCount();
+}
+function wirePickerRows() {
+  document.querySelectorAll("#pickerList .pick-row").forEach(r => {
+    r.onclick = () => { planAddExercise(pickerDayId, r.dataset.id); render(); const meta = IX.exById[r.dataset.id]; toast(`Added ${meta ? meta.Exercise_Name : r.dataset.id}`); };
+  });
+}
+function updatePickerCount() { const el = document.getElementById("pickerCount"); if (el) el.textContent = document.querySelectorAll("#pickerList .pick-row").length + " shown"; }
+
+/* ---------- export / import (real; operates on the D-33 root) ---------- */
 function exportData() {
   PERSONAL.exportedAt = new Date().toISOString();
+  savePersonal();
   const blob = new Blob([JSON.stringify(PERSONAL, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `${APP_NAME.toLowerCase()}-data-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `${APP_NAME.toLowerCase()}-data-${new Date().toISOString().slice(0, 10)}.json`;
   a.click(); URL.revokeObjectURL(a.href);
-  toast("Exported your data (empty for now — plans arrive in Phase 2).");
+  const n = PERSONAL.programs.length;
+  toast(n ? `Exported ${n} program${n === 1 ? "" : "s"}.` : "Exported (no programs yet).");
 }
 function importData(e) {
   const file = e.target.files[0]; if (!file) return;
@@ -800,10 +1196,13 @@ function importData(e) {
   reader.onload = () => {
     try {
       const obj = JSON.parse(reader.result);
-      if (typeof obj !== "object" || !("programs" in obj) || !("sessions" in obj))
-        throw new Error("Not a LiftPlan data file (missing programs/sessions).");
-      PERSONAL = Object.assign({ app: APP_NAME, schemaVersion: 1, programs: [], sessions: [], xp: { byMuscle: {} } }, obj);
-      toast(`Imported: ${PERSONAL.programs.length} program(s), ${PERSONAL.sessions.length} session(s).`);
+      if (typeof obj !== "object" || obj === null || !Array.isArray(obj.programs))
+        throw new Error("Not a LiftPlan data file.");
+      PERSONAL = migratePersonal(obj);
+      planSel.mesoId = null;
+      savePersonal();
+      if (currentView === "plan") render();
+      toast(`Imported ${PERSONAL.programs.length} program(s).`);
     } catch (err) { toast("Import failed: " + err.message); }
     e.target.value = "";
   };
