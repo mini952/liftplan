@@ -28,6 +28,9 @@
     --bad:     #B23A32;
     --shadow:  0 1px 2px rgba(27,30,36,.06), 0 4px 16px rgba(27,30,36,.05);
     --rail-w:  248px;
+    --accent:  #31D3D0;   /* aqua — UI accent on dark chrome (D-42) */
+    --accent-deep: #0E9C99; /* deepened aqua — text/links on light */
+    --hm-off:  #E7E9EC;   /* heat zone with no/negligible work */
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
@@ -75,8 +78,8 @@
   }
   .nav-btn .count { margin-left: auto; font-size: 11px; color: #7A828F; }
   .nav-btn:hover { background: rgba(255,255,255,.05); color: #fff; }
-  .nav-btn.active { background: rgba(168,54,38,.16); color: #fff; box-shadow: inset 2px 0 0 var(--muscle); }
-  .nav-btn.active .count { color: #E4B4AC; }
+  .nav-btn.active { background: rgba(49,211,208,.16); color: #fff; box-shadow: inset 2px 0 0 var(--accent); }
+  .nav-btn.active .count { color: #A9E9E7; }
   .nav-ico { width: 16px; height: 16px; flex: none; opacity: .9; }
 
   .rail-foot { margin-top: auto; padding: 12px; }
@@ -131,7 +134,7 @@
     display: flex; align-items: center; gap: 12px;
   }
   .li:hover { background: #E3E6E9; }
-  .li.sel { background: #fff; box-shadow: inset 3px 0 0 var(--muscle); }
+  .li.sel { background: #fff; box-shadow: inset 3px 0 0 var(--accent); }
   .li .li-id { font-size: 10.5px; color: var(--ink-3); }
   .li .li-title { font-weight: 500; font-size: 13.5px; letter-spacing: -.005em; }
   .li .li-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
@@ -251,7 +254,7 @@
   .meso-list { display:flex; flex-direction:column; gap:6px; }
   .meso-item { text-align:left; border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:9px 11px; cursor:pointer; display:flex; flex-direction:column; gap:2px; }
   .meso-item:hover { border-color:var(--steel); }
-  .meso-item.sel { background:#fff; box-shadow: inset 3px 0 0 var(--muscle); }
+  .meso-item.sel { background:#fff; box-shadow: inset 3px 0 0 var(--accent); }
   .mi-name { font-weight:600; font-size:13px; color:var(--ink); }
   .mi-meta { font-size:11px; color:var(--ink-3); }
 
@@ -330,6 +333,71 @@
     .pane-body.split { grid-template-columns: 1fr; }
     .plan-cols { grid-template-columns: 1fr; }
   }
+
+  /* ---- Phase 3 muscle heatmap ---- */
+  .hm-panel { margin-top:22px; border:1px solid var(--line); border-radius:12px; background:var(--card); padding:16px 18px 20px; }
+  .hm-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  .hm-title { font-size:15px; font-weight:600; color:var(--ink); }
+  .hm-sub { font-size:12px; color:var(--ink-3); }
+  .hm-controls { display:flex; gap:18px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+  .hm-seg { display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .hm-seg button { border:0; background:var(--paper); color:var(--ink-2); font:inherit; font-size:12px; padding:6px 12px; cursor:pointer; }
+  .hm-seg button.on { background:var(--accent); color:#06302F; font-weight:600; }
+  .hm-seg button + button { border-left:1px solid var(--line); }
+  .hm-floor { display:flex; align-items:center; gap:9px; font-size:12px; color:var(--ink-2); transition:opacity .15s; }
+  .hm-floor input[type=range] { accent-color:var(--accent-deep); }
+  .hm-floor .val { font-variant-numeric:tabular-nums; min-width:1.6em; color:var(--ink); }
+  .hm-body { display:grid; grid-template-columns:1fr 220px; gap:20px; align-items:start; }
+  .hm-fig { width:100%; }
+  .hm-fig svg { width:100%; height:auto; display:block; }
+  .hm-fig [data-group], .hm-fig [data-area] { transition:fill .18s ease; }
+  .hm-fig .nonmuscle { fill:#EDF0F2 !important; stroke:#CDD2D8 !important; }
+  .hm-side h4 { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); margin:0 0 8px; }
+  .hm-list { list-style:none; margin:0 0 16px; padding:0; display:flex; flex-direction:column; gap:3px; max-height:360px; overflow:auto; }
+  .hm-list li { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--ink-2); }
+  .hm-list .sw { width:13px; height:13px; border-radius:3px; flex:0 0 auto; border:1px solid rgba(0,0,0,.08); }
+  .hm-list .nm { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .hm-list .vv { font-variant-numeric:tabular-nums; color:var(--ink-3); }
+  .hm-chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .hm-chip { font-size:10.5px; padding:3px 9px; border-radius:11px; border:1px dashed #9aa3ab; color:var(--ink-2); background:rgba(154,163,171,.16); }
+  .hm-empty { font-size:12px; color:var(--ink-3); padding:8px 0; }
+  @media (max-width:860px) { .hm-body { grid-template-columns:1fr; } }
+
+  /* ---- Phase 3 layout pass ---- */
+  .prog-meta { display:flex; align-items:center; gap:12px; margin:-8px 2px 16px; }
+  .prog-meta .name-input { flex:1; max-width:360px; }
+  .meso-bar { display:flex; align-items:center; gap:12px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; background:var(--card); margin-bottom:18px; }
+  .meso-bar .mb-label { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink-3); flex:none; }
+  .meso-pills { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+  .meso-pill { display:flex; flex-direction:column; gap:1px; text-align:left; border:1px solid var(--line); background:var(--paper); color:var(--ink-2); padding:5px 13px; border-radius:14px; font:inherit; font-size:12.5px; cursor:pointer; font-weight:500; }
+  .meso-pill:hover { border-color:var(--steel); color:var(--ink); }
+  .meso-pill.sel { background:var(--accent); border-color:var(--accent); color:#06302F; font-weight:600; }
+  .meso-pill .mp-meta { font-size:10.5px; color:var(--ink-3); font-weight:400; }
+  .meso-pill.sel .mp-meta { color:#0a3f3d; }
+  .plan-editor.full { width:100%; min-width:0; }
+  /* compact weekly map */
+  .hm-compact { display:grid; grid-template-columns:auto 1fr; gap:22px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin:18px 0 6px; }
+  .hmc-left .hm-fig { width:230px; }
+  .hmc-h { display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:600; font-size:13px; margin-bottom:6px; }
+  .hm-expand { border:1px solid var(--line); background:var(--paper); border-radius:7px; padding:4px 10px; font:inherit; font-size:12px; cursor:pointer; color:var(--accent-deep); font-weight:600; }
+  .hm-expand:hover { border-color:var(--accent-deep); }
+  .hottest { font-size:13px; margin-bottom:9px; }
+  .hottest b { color:var(--ink); }
+  .hm-list.mini { margin:0; max-height:none; max-width:280px; }
+  .hm-list.mini .nm { flex:0 1 auto; }
+  .hm-list.mini .vv { margin-left:2px; }
+  .hm-note { font-size:11.5px; color:var(--warn); margin-top:10px; }
+  /* expanded extras */
+  .hm-panel .hm-body .hm-fig { max-width:440px; }
+  .hm-ramp { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-3); }
+  .hm-ramp-bar { width:90px; height:9px; border-radius:5px; background:linear-gradient(90deg,#F4E4BD,#E1A95C,#D07E3E,#B85632,#A83626); }
+  /* per-day workout map */
+  .workout-map { background:var(--paper); border:1px solid var(--line-2); border-radius:9px; padding:8px; margin-bottom:10px; display:flex; flex-direction:column; align-items:center; }
+  .workout-map .hm-fig { width:150px; }
+  .wm-cap { font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); align-self:flex-start; margin-bottom:2px; }
+  /* Area mode: fade internal group borders so same-area zones read as one region */
+  .hm-fig svg.hm-area .group { stroke:#E4E7EA !important; stroke-width:.5 !important; }
+
 </style>
 </head>
 <body>
@@ -557,6 +625,173 @@ function mainMover(exId) {
 
 /* ---------- heat scale (previews the Phase-3 heatmap identity) ---------- */
 const HEAT = { 1:"#C9CED4",2:"#CFC9A6",3:"#D9C77E",4:"#E0B45C",5:"#E0A144",6:"#D98638",7:"#CE6A34",8:"#BE4C2C",9:"#A83626",10:"#8F2620" };
+
+/* ================= Phase 3 heatmap engine (validated against real fact table) ================= */
+const SVG_BODY_GROUPS = "<svg viewBox=\"0 0 820 900\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\"\n     aria-labelledby=\"lp-title lp-desc\" font-family=\"Inter, Arial, sans-serif\">\n  <title id=\"lp-title\">LiftPlan groups review v1 — Muscle Group grain (front &amp; back)</title>\n  <desc id=\"lp-desc\">The approved v3 silhouette subdivided into the 22 LiftPlan muscle groups.\n  Surface groups are drawn on the body; five fully-deep groups appear as ghosted chips below.\n  Each zone carries data-group and data-area so the same figure drives Group and Area grain.</desc>\n  <rect x=\"0\" y=\"0\" width=\"820\" height=\"980\" fill=\"#ffffff\"/>\n  <text x=\"16\" y=\"28\" font-size=\"14\" font-weight=\"700\" fill=\"#94a3b8\" letter-spacing=\"1\">GROUPS v1</text>\n  <text x=\"210\" y=\"42\" font-size=\"17\" font-weight=\"700\" text-anchor=\"middle\" fill=\"#0F172A\" letter-spacing=\"1.5\">FRONT</text>\n  <text x=\"600\" y=\"42\" font-size=\"17\" font-weight=\"700\" text-anchor=\"middle\" fill=\"#0F172A\" letter-spacing=\"1.5\">BACK</text>\n  <g id=\"front\" transform=\"translate(40,60)\">\n      <path id=\"bg-head-front\" class=\"nonmuscle\" d=\"M 153.3,29.2 Q 158.0,24.0 165.0,24.0 L 175.0,24.0 Q 182.0,24.0 186.7,29.2 L 193.3,36.8 Q 198.0,42.0 197.5,49.0 L 196.5,65.0 Q 196.0,72.0 191.3,77.2 L 182.7,86.8 Q 178.0,92.0 171.0,92.0 L 169.0,92.0 Q 162.0,92.0 157.3,86.8 L 148.7,77.2 Q 144.0,72.0 143.5,65.0 L 142.5,49.0 Q 142.0,42.0 146.7,36.8 L 153.3,29.2 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-neck-front\" class=\"nonmuscle\" d=\"M 146.9,89.1 Q 150.0,84.0 156.0,84.0 L 184.0,84.0 Q 190.0,84.0 193.1,89.1 L 202.9,104.9 Q 206.0,110.0 203.3,115.4 L 202.7,116.6 Q 200.0,122.0 194.0,122.0 L 146.0,122.0 Q 140.0,122.0 137.3,116.6 L 136.7,115.4 Q 134.0,110.0 137.1,104.9 L 146.9,89.1 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-hand-front-right\" class=\"nonmuscle\" d=\"M 269.0,475.0 Q 272.0,470.0 277.9,468.9 L 288.1,467.1 Q 294.0,466.0 294.7,472.0 L 297.3,496.0 Q 298.0,502.0 294.5,506.9 L 291.5,511.1 Q 288.0,516.0 282.3,514.1 L 275.7,511.9 Q 270.0,510.0 269.2,504.1 L 266.8,485.9 Q 266.0,480.0 269.0,475.0 L 269.0,475.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-hand-front-left\" class=\"nonmuscle\" d=\"M 71.0,475.0 Q 68.0,470.0 62.1,468.9 L 51.9,467.1 Q 46.0,466.0 45.3,472.0 L 42.7,496.0 Q 42.0,502.0 45.5,506.9 L 48.5,511.1 Q 52.0,516.0 57.7,514.1 L 64.3,511.9 Q 70.0,510.0 70.8,504.1 L 73.2,485.9 Q 74.0,480.0 71.0,475.0 L 71.0,475.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-foot-front-right\" class=\"nonmuscle\" d=\"M 189.7,754.0 Q 190.0,748.0 196.0,748.0 L 206.0,748.0 Q 212.0,748.0 216.1,752.4 L 231.9,769.6 Q 236.0,774.0 236.0,780.0 L 236.0,782.0 Q 236.0,788.0 230.0,788.0 L 194.0,788.0 Q 188.0,788.0 188.3,782.0 L 189.7,754.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-foot-front-left\" class=\"nonmuscle\" d=\"M 150.3,754.0 Q 150.0,748.0 144.0,748.0 L 134.0,748.0 Q 128.0,748.0 123.9,752.4 L 108.1,769.6 Q 104.0,774.0 104.0,780.0 L 104.0,782.0 Q 104.0,788.0 110.0,788.0 L 146.0,788.0 Q 152.0,788.0 151.7,782.0 L 150.3,754.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"grp-pectorals-front-right\" class=\"group m-group-pectorals\" data-group=\"MG0016\" data-area=\"MA0007\" role=\"img\" aria-label=\"Pectorals\" d=\"M 172.0,127.0 Q 172.0,120.0 179.0,120.7 L 203.0,123.3 Q 210.0,124.0 214.3,129.5 L 225.7,144.5 Q 230.0,150.0 230.3,157.0 L 231.7,189.0 Q 232.0,196.0 227.4,201.3 L 210.6,220.7 Q 206.0,226.0 199.0,225.6 L 179.0,224.4 Q 172.0,224.0 172.0,217.0 L 172.0,127.0 Z\" fill=\"#E06B5A\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-pectorals-front-left\" class=\"group m-group-pectorals\" data-group=\"MG0016\" data-area=\"MA0007\" role=\"img\" aria-label=\"Pectorals\" d=\"M 168.0,127.0 Q 168.0,120.0 161.0,120.7 L 137.0,123.3 Q 130.0,124.0 125.7,129.5 L 114.3,144.5 Q 110.0,150.0 109.7,157.0 L 108.3,189.0 Q 108.0,196.0 112.6,201.3 L 129.4,220.7 Q 134.0,226.0 141.0,225.6 L 161.0,224.4 Q 168.0,224.0 168.0,217.0 L 168.0,127.0 Z\" fill=\"#E06B5A\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-serratus-front-right\" class=\"group m-group-serratus-anterior\" data-group=\"MG0017\" data-area=\"MA0007\" role=\"img\" aria-label=\"Serratus Anterior\" d=\"M 211.9,211.7 Q 214.0,205.0 220.9,206.2 L 225.1,206.8 Q 232.0,208.0 232.9,214.9 L 235.1,233.1 Q 236.0,240.0 232.1,245.8 L 227.9,252.2 Q 224.0,258.0 217.9,254.5 L 216.1,253.5 Q 210.0,250.0 209.5,243.0 L 208.5,231.0 Q 208.0,224.0 210.1,217.3 L 211.9,211.7 Z\" fill=\"#EE9385\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-serratus-front-left\" class=\"group m-group-serratus-anterior\" data-group=\"MG0017\" data-area=\"MA0007\" role=\"img\" aria-label=\"Serratus Anterior\" d=\"M 128.1,211.7 Q 126.0,205.0 119.1,206.2 L 114.9,206.8 Q 108.0,208.0 107.1,214.9 L 104.9,233.1 Q 104.0,240.0 107.9,245.8 L 112.1,252.2 Q 116.0,258.0 122.1,254.5 L 123.9,253.5 Q 130.0,250.0 130.5,243.0 L 131.5,231.0 Q 132.0,224.0 129.9,217.3 L 128.1,211.7 Z\" fill=\"#EE9385\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-deltoids-front-right\" class=\"group m-group-deltoids\" data-group=\"MG0015\" data-area=\"MA0006\" role=\"img\" aria-label=\"Deltoids\" d=\"M 215.9,125.8 Q 212.0,120.0 218.3,117.0 L 235.7,109.0 Q 242.0,106.0 248.8,107.6 L 277.2,114.4 Q 284.0,116.0 287.4,122.1 L 298.6,141.9 Q 302.0,148.0 299.8,154.6 L 294.2,171.4 Q 292.0,178.0 285.8,181.3 L 264.2,192.7 Q 258.0,196.0 251.4,193.6 L 242.6,190.4 Q 236.0,188.0 235.3,181.0 L 232.7,157.0 Q 232.0,150.0 228.1,144.2 L 215.9,125.8 Z\" fill=\"#B58BD0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-deltoids-front-left\" class=\"group m-group-deltoids\" data-group=\"MG0015\" data-area=\"MA0006\" role=\"img\" aria-label=\"Deltoids\" d=\"M 124.1,125.8 Q 128.0,120.0 121.7,117.0 L 104.3,109.0 Q 98.0,106.0 91.2,107.6 L 62.8,114.4 Q 56.0,116.0 52.6,122.1 L 41.4,141.9 Q 38.0,148.0 40.2,154.6 L 45.8,171.4 Q 48.0,178.0 54.2,181.3 L 75.8,192.7 Q 82.0,196.0 88.6,193.6 L 97.4,190.4 Q 104.0,188.0 104.7,181.0 L 107.3,157.0 Q 108.0,150.0 111.9,144.2 L 124.1,125.8 Z\" fill=\"#B58BD0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-biceps-front-right\" class=\"group m-group-biceps\" data-group=\"MG0020\" data-area=\"MA0008\" role=\"img\" aria-label=\"Biceps\" d=\"M 256.3,207.0 Q 256.0,200.0 262.4,197.2 L 285.6,186.8 Q 292.0,184.0 293.8,190.8 L 306.2,237.2 Q 308.0,244.0 307.5,251.0 L 304.5,299.0 Q 304.0,306.0 302.8,312.9 L 299.2,335.1 Q 298.0,342.0 291.1,343.1 L 278.9,344.9 Q 272.0,346.0 270.8,339.1 L 265.2,306.9 Q 264.0,300.0 263.3,293.0 L 258.7,251.0 Q 258.0,244.0 257.7,237.0 L 256.3,207.0 Z\" fill=\"#45C4B0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-biceps-front-left\" class=\"group m-group-biceps\" data-group=\"MG0020\" data-area=\"MA0008\" role=\"img\" aria-label=\"Biceps\" d=\"M 83.7,207.0 Q 84.0,200.0 77.6,197.2 L 54.4,186.8 Q 48.0,184.0 46.2,190.8 L 33.8,237.2 Q 32.0,244.0 32.5,251.0 L 35.5,299.0 Q 36.0,306.0 37.2,312.9 L 40.8,335.1 Q 42.0,342.0 48.9,343.1 L 61.1,344.9 Q 68.0,346.0 69.2,339.1 L 74.8,306.9 Q 76.0,300.0 76.7,293.0 L 81.3,251.0 Q 82.0,244.0 82.3,237.0 L 83.7,207.0 Z\" fill=\"#45C4B0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-forearms-front-right\" class=\"group m-group-forearms\" data-group=\"MG0022\" data-area=\"MA0009\" role=\"img\" aria-label=\"Forearms\" d=\"M 268.5,354.8 Q 270.0,348.0 276.9,347.0 L 291.1,345.0 Q 298.0,344.0 298.5,351.0 L 301.5,397.0 Q 302.0,404.0 301.0,410.9 L 295.0,451.1 Q 294.0,458.0 288.2,461.9 L 281.8,466.1 Q 276.0,470.0 269.7,466.9 L 266.3,465.1 Q 260.0,462.0 260.2,455.0 L 261.8,411.0 Q 262.0,404.0 262.7,397.0 L 265.3,373.0 Q 266.0,366.0 267.5,359.2 L 268.5,354.8 Z\" fill=\"#EE8E86\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-forearms-front-left\" class=\"group m-group-forearms\" data-group=\"MG0022\" data-area=\"MA0009\" role=\"img\" aria-label=\"Forearms\" d=\"M 71.5,354.8 Q 70.0,348.0 63.1,347.0 L 48.9,345.0 Q 42.0,344.0 41.5,351.0 L 38.5,397.0 Q 38.0,404.0 39.0,410.9 L 45.0,451.1 Q 46.0,458.0 51.8,461.9 L 58.2,466.1 Q 64.0,470.0 70.3,466.9 L 73.7,465.1 Q 80.0,462.0 79.8,455.0 L 78.2,411.0 Q 78.0,404.0 77.3,397.0 L 74.7,373.0 Q 74.0,366.0 72.5,359.2 L 71.5,354.8 Z\" fill=\"#EE8E86\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-abdominals-front\" class=\"group m-group-abdominals\" data-group=\"MG0009\" data-area=\"MA0003\" role=\"img\" aria-label=\"Abdominals\" d=\"M 120.0,229.0 Q 120.0,222.0 127.0,222.0 L 213.0,222.0 Q 220.0,222.0 220.0,229.0 L 220.0,285.0 Q 220.0,292.0 218.0,298.7 L 204.0,347.3 Q 202.0,354.0 196.4,358.2 L 175.6,373.8 Q 170.0,378.0 164.4,373.8 L 143.6,358.2 Q 138.0,354.0 136.0,347.3 L 122.0,298.7 Q 120.0,292.0 120.0,285.0 L 120.0,229.0 Z\" fill=\"#8FBF9F\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-quadriceps-front-right\" class=\"group m-group-quadriceps\" data-group=\"MG0004\" data-area=\"MA0002\" role=\"img\" aria-label=\"Quadriceps\" d=\"M 197.3,391.0 Q 198.0,384.0 202.9,379.1 L 209.1,372.9 Q 214.0,368.0 215.7,374.8 L 230.3,435.2 Q 232.0,442.0 231.2,449.0 L 224.8,505.0 Q 224.0,512.0 222.4,518.8 L 213.6,555.2 Q 212.0,562.0 205.1,563.3 L 196.9,564.7 Q 190.0,566.0 189.3,559.0 L 184.7,509.0 Q 184.0,502.0 184.9,495.1 L 191.1,446.9 Q 192.0,440.0 192.7,433.0 L 197.3,391.0 Z\" fill=\"#E8C547\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-quadriceps-front-left\" class=\"group m-group-quadriceps\" data-group=\"MG0004\" data-area=\"MA0002\" role=\"img\" aria-label=\"Quadriceps\" d=\"M 142.7,391.0 Q 142.0,384.0 137.1,379.1 L 130.9,372.9 Q 126.0,368.0 124.3,374.8 L 109.7,435.2 Q 108.0,442.0 108.8,449.0 L 115.2,505.0 Q 116.0,512.0 117.6,518.8 L 126.4,555.2 Q 128.0,562.0 134.9,563.3 L 143.1,564.7 Q 150.0,566.0 150.7,559.0 L 155.3,509.0 Q 156.0,502.0 155.1,495.1 L 148.9,446.9 Q 148.0,440.0 147.3,433.0 L 142.7,391.0 Z\" fill=\"#E8C547\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-adductors-front-right\" class=\"group m-group-adductors\" data-group=\"MG0007\" data-area=\"MA0002\" role=\"img\" aria-label=\"Adductors\" d=\"M 174.3,389.0 Q 174.0,382.0 180.9,383.3 L 189.1,384.7 Q 196.0,386.0 196.2,393.0 L 197.8,435.0 Q 198.0,442.0 197.1,448.9 L 191.9,487.1 Q 191.0,494.0 185.5,496.0 L 185.5,496.0 Q 180.0,498.0 179.5,491.0 L 176.5,443.0 Q 176.0,436.0 175.7,429.0 L 174.3,389.0 Z\" fill=\"#D8C86A\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-adductors-front-left\" class=\"group m-group-adductors\" data-group=\"MG0007\" data-area=\"MA0002\" role=\"img\" aria-label=\"Adductors\" d=\"M 165.7,389.0 Q 166.0,382.0 159.1,383.3 L 150.9,384.7 Q 144.0,386.0 143.8,393.0 L 142.2,435.0 Q 142.0,442.0 142.9,448.9 L 148.1,487.1 Q 149.0,494.0 154.5,496.0 L 154.5,496.0 Q 160.0,498.0 160.5,491.0 L 163.5,443.0 Q 164.0,436.0 164.3,429.0 L 165.7,389.0 Z\" fill=\"#D8C86A\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-tibialis-front-right\" class=\"group m-group-tibialis\" data-group=\"MG0001\" data-area=\"MA0001\" role=\"img\" aria-label=\"Tibialis\" d=\"M 189.4,579.0 Q 190.0,572.0 196.9,573.1 L 209.1,574.9 Q 216.0,576.0 215.4,583.0 L 212.6,613.0 Q 212.0,620.0 212.2,627.0 L 213.8,683.0 Q 214.0,690.0 213.5,697.0 L 210.5,737.0 Q 210.0,744.0 203.1,744.9 L 200.9,745.1 Q 194.0,746.0 193.4,739.0 L 188.6,687.0 Q 188.0,680.0 187.8,673.0 L 186.2,627.0 Q 186.0,620.0 186.6,613.0 L 189.4,579.0 Z\" fill=\"#F2C14E\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-tibialis-front-left\" class=\"group m-group-tibialis\" data-group=\"MG0001\" data-area=\"MA0001\" role=\"img\" aria-label=\"Tibialis\" d=\"M 150.6,579.0 Q 150.0,572.0 143.1,573.1 L 130.9,574.9 Q 124.0,576.0 124.6,583.0 L 127.4,613.0 Q 128.0,620.0 127.8,627.0 L 126.2,683.0 Q 126.0,690.0 126.5,697.0 L 129.5,737.0 Q 130.0,744.0 136.9,744.9 L 139.1,745.1 Q 146.0,746.0 146.6,739.0 L 151.4,687.0 Q 152.0,680.0 152.2,673.0 L 153.8,627.0 Q 154.0,620.0 153.4,613.0 L 150.6,579.0 Z\" fill=\"#F2C14E\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-peroneals-front-right\" class=\"group m-group-peroneals\" data-group=\"MG0002\" data-area=\"MA0001\" role=\"img\" aria-label=\"Peroneals\" d=\"M 215.4,583.0 Q 216.0,576.0 219.0,572.0 L 219.0,572.0 Q 222.0,568.0 223.1,574.9 L 228.9,613.1 Q 230.0,620.0 229.3,627.0 L 223.7,685.0 Q 223.0,692.0 218.5,691.0 L 218.5,691.0 Q 214.0,690.0 213.8,683.0 L 212.2,627.0 Q 212.0,620.0 212.6,613.0 L 215.4,583.0 Z\" fill=\"#D98E2B\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-peroneals-front-left\" class=\"group m-group-peroneals\" data-group=\"MG0002\" data-area=\"MA0001\" role=\"img\" aria-label=\"Peroneals\" d=\"M 124.6,583.0 Q 124.0,576.0 121.0,572.0 L 121.0,572.0 Q 118.0,568.0 116.9,574.9 L 111.1,613.1 Q 110.0,620.0 110.7,627.0 L 116.3,685.0 Q 117.0,692.0 121.5,691.0 L 121.5,691.0 Q 126.0,690.0 126.2,683.0 L 127.8,627.0 Q 128.0,620.0 127.4,613.0 L 124.6,583.0 Z\" fill=\"#D98E2B\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <text x=\"206\" y=\"173\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Pectorals</text>\n      <text x=\"223\" y=\"231\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Serratus Anterior</text>\n      <text x=\"259\" y=\"150\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Deltoids</text>\n      <text x=\"284\" y=\"271\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Biceps</text>\n      <text x=\"280\" y=\"407\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Forearms</text>\n      <text x=\"170\" y=\"302\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Abdominals</text>\n      <text x=\"208\" y=\"472\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Quadriceps</text>\n      <text x=\"188\" y=\"440\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Adductors</text>\n      <text x=\"203\" y=\"656\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Tibialis</text>\n      <text x=\"222\" y=\"628\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Peroneals</text>\n  </g>\n  <g id=\"back\" transform=\"translate(430,60)\">\n      <path id=\"bg-head-back\" class=\"nonmuscle\" d=\"M 153.3,29.2 Q 158.0,24.0 165.0,24.0 L 175.0,24.0 Q 182.0,24.0 186.7,29.2 L 193.3,36.8 Q 198.0,42.0 197.5,49.0 L 196.5,65.0 Q 196.0,72.0 191.3,77.2 L 182.7,86.8 Q 178.0,92.0 171.0,92.0 L 169.0,92.0 Q 162.0,92.0 157.3,86.8 L 148.7,77.2 Q 144.0,72.0 143.5,65.0 L 142.5,49.0 Q 142.0,42.0 146.7,36.8 L 153.3,29.2 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-neck-back\" class=\"nonmuscle\" d=\"M 146.9,89.1 Q 150.0,84.0 156.0,84.0 L 184.0,84.0 Q 190.0,84.0 193.1,89.1 L 202.9,104.9 Q 206.0,110.0 203.3,115.4 L 202.7,116.6 Q 200.0,122.0 194.0,122.0 L 146.0,122.0 Q 140.0,122.0 137.3,116.6 L 136.7,115.4 Q 134.0,110.0 137.1,104.9 L 146.9,89.1 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-hand-back-right\" class=\"nonmuscle\" d=\"M 269.0,475.0 Q 272.0,470.0 277.9,468.9 L 288.1,467.1 Q 294.0,466.0 294.7,472.0 L 297.3,496.0 Q 298.0,502.0 294.5,506.9 L 291.5,511.1 Q 288.0,516.0 282.3,514.1 L 275.7,511.9 Q 270.0,510.0 269.2,504.1 L 266.8,485.9 Q 266.0,480.0 269.0,475.0 L 269.0,475.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-hand-back-left\" class=\"nonmuscle\" d=\"M 71.0,475.0 Q 68.0,470.0 62.1,468.9 L 51.9,467.1 Q 46.0,466.0 45.3,472.0 L 42.7,496.0 Q 42.0,502.0 45.5,506.9 L 48.5,511.1 Q 52.0,516.0 57.7,514.1 L 64.3,511.9 Q 70.0,510.0 70.8,504.1 L 73.2,485.9 Q 74.0,480.0 71.0,475.0 L 71.0,475.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-foot-back-right\" class=\"nonmuscle\" d=\"M 189.7,754.0 Q 190.0,748.0 196.0,748.0 L 206.0,748.0 Q 212.0,748.0 216.1,752.4 L 231.9,769.6 Q 236.0,774.0 236.0,780.0 L 236.0,782.0 Q 236.0,788.0 230.0,788.0 L 194.0,788.0 Q 188.0,788.0 188.3,782.0 L 189.7,754.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"bg-foot-back-left\" class=\"nonmuscle\" d=\"M 150.3,754.0 Q 150.0,748.0 144.0,748.0 L 134.0,748.0 Q 128.0,748.0 123.9,752.4 L 108.1,769.6 Q 104.0,774.0 104.0,780.0 L 104.0,782.0 Q 104.0,788.0 110.0,788.0 L 146.0,788.0 Q 152.0,788.0 151.7,782.0 L 150.3,754.0 Z\" fill=\"#e6e6e6\" stroke=\"#c9c9c9\" stroke-width=\"1\"/>\n      <path id=\"grp-trapezius-back\" class=\"group m-group-trapezius\" data-group=\"MG0010\" data-area=\"MA0005\" role=\"img\" aria-label=\"Trapezius\" d=\"M 143.1,102.9 Q 148.0,98.0 155.0,98.0 L 185.0,98.0 Q 192.0,98.0 196.9,102.9 L 209.1,115.1 Q 214.0,120.0 216.6,126.5 L 223.4,143.5 Q 226.0,150.0 224.3,156.8 L 211.7,207.2 Q 210.0,214.0 204.8,218.7 L 175.2,245.3 Q 170.0,250.0 164.8,245.3 L 135.2,218.7 Q 130.0,214.0 128.3,207.2 L 115.7,156.8 Q 114.0,150.0 116.6,143.5 L 123.4,126.5 Q 126.0,120.0 130.9,115.1 L 143.1,102.9 Z\" fill=\"#5B8DD9\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-lats-back-right\" class=\"group m-group-latissimus-dorsi\" data-group=\"MG0011\" data-area=\"MA0005\" role=\"img\" aria-label=\"Latissimus Dorsi\" d=\"M 202.4,191.0 Q 206.0,185.0 210.9,189.9 L 221.1,200.1 Q 226.0,205.0 229.9,210.8 L 232.1,214.2 Q 236.0,220.0 235.0,226.9 L 231.0,255.1 Q 230.0,262.0 227.6,268.6 L 218.4,293.4 Q 216.0,300.0 211.1,304.9 L 204.9,311.1 Q 200.0,316.0 197.5,309.5 L 188.5,286.5 Q 186.0,280.0 185.7,273.0 L 184.3,242.0 Q 184.0,235.0 186.2,228.4 L 191.8,211.6 Q 194.0,205.0 197.6,199.0 L 202.4,191.0 Z\" fill=\"#3E6FB0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-lats-back-left\" class=\"group m-group-latissimus-dorsi\" data-group=\"MG0011\" data-area=\"MA0005\" role=\"img\" aria-label=\"Latissimus Dorsi\" d=\"M 137.6,191.0 Q 134.0,185.0 129.1,189.9 L 118.9,200.1 Q 114.0,205.0 110.1,210.8 L 107.9,214.2 Q 104.0,220.0 105.0,226.9 L 109.0,255.1 Q 110.0,262.0 112.4,268.6 L 121.6,293.4 Q 124.0,300.0 128.9,304.9 L 135.1,311.1 Q 140.0,316.0 142.5,309.5 L 151.5,286.5 Q 154.0,280.0 154.3,273.0 L 155.7,242.0 Q 156.0,235.0 153.8,228.4 L 148.2,211.6 Q 146.0,205.0 142.4,199.0 L 137.6,191.0 Z\" fill=\"#3E6FB0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-rotator-cuff-back-right\" class=\"group m-group-rotator-cuff\" data-group=\"MG0014\" data-area=\"MA0005\" role=\"img\" aria-label=\"Rotator Cuff\" d=\"M 204.1,164.7 Q 206.0,158.0 212.9,159.3 L 221.1,160.7 Q 228.0,162.0 229.2,168.9 L 230.8,178.1 Q 232.0,185.0 227.3,190.1 L 224.7,192.9 Q 220.0,198.0 213.4,195.5 L 210.6,194.5 Q 204.0,192.0 203.3,185.0 L 202.7,179.0 Q 202.0,172.0 203.9,165.3 L 204.1,164.7 Z\" fill=\"#86ADE2\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-rotator-cuff-back-left\" class=\"group m-group-rotator-cuff\" data-group=\"MG0014\" data-area=\"MA0005\" role=\"img\" aria-label=\"Rotator Cuff\" d=\"M 135.9,164.7 Q 134.0,158.0 127.1,159.3 L 118.9,160.7 Q 112.0,162.0 110.8,168.9 L 109.2,178.1 Q 108.0,185.0 112.7,190.1 L 115.3,192.9 Q 120.0,198.0 126.6,195.5 L 129.4,194.5 Q 136.0,192.0 136.7,185.0 L 137.3,179.0 Q 138.0,172.0 136.1,165.3 L 135.9,164.7 Z\" fill=\"#86ADE2\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-abdominals-lb-back\" class=\"group m-group-abdominals\" data-group=\"MG0009\" data-area=\"MA0004\" role=\"img\" aria-label=\"Abdominals\" d=\"M 136.6,338.9 Q 138.0,332.0 145.0,332.0 L 195.0,332.0 Q 202.0,332.0 203.4,338.9 L 208.6,365.1 Q 210.0,372.0 204.0,375.6 L 176.0,392.4 Q 170.0,396.0 164.0,392.4 L 136.0,375.6 Q 130.0,372.0 131.4,365.1 L 136.6,338.9 Z\" fill=\"#8FBF9F\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-deltoids-back-right\" class=\"group m-group-deltoids\" data-group=\"MG0015\" data-area=\"MA0006\" role=\"img\" aria-label=\"Deltoids\" d=\"M 220.9,122.9 Q 216.0,118.0 222.5,115.3 L 243.5,106.7 Q 250.0,104.0 256.7,106.1 L 281.3,113.9 Q 288.0,116.0 291.0,122.3 L 301.0,143.7 Q 304.0,150.0 301.9,156.7 L 296.1,175.3 Q 294.0,182.0 287.9,185.4 L 268.1,196.6 Q 262.0,200.0 258.0,194.3 L 252.0,185.7 Q 248.0,180.0 248.0,173.0 L 248.0,157.0 Q 248.0,150.0 243.1,145.1 L 220.9,122.9 Z\" fill=\"#B58BD0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-deltoids-back-left\" class=\"group m-group-deltoids\" data-group=\"MG0015\" data-area=\"MA0006\" role=\"img\" aria-label=\"Deltoids\" d=\"M 119.1,122.9 Q 124.0,118.0 117.5,115.3 L 96.5,106.7 Q 90.0,104.0 83.3,106.1 L 58.7,113.9 Q 52.0,116.0 49.0,122.3 L 39.0,143.7 Q 36.0,150.0 38.1,156.7 L 43.9,175.3 Q 46.0,182.0 52.1,185.4 L 71.9,196.6 Q 78.0,200.0 82.0,194.3 L 88.0,185.7 Q 92.0,180.0 92.0,173.0 L 92.0,157.0 Q 92.0,150.0 96.9,145.1 L 119.1,122.9 Z\" fill=\"#B58BD0\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-triceps-back-right\" class=\"group m-group-triceps\" data-group=\"MG0019\" data-area=\"MA0008\" role=\"img\" aria-label=\"Triceps\" d=\"M 256.3,207.0 Q 256.0,200.0 262.4,197.2 L 285.6,186.8 Q 292.0,184.0 293.8,190.8 L 306.2,237.2 Q 308.0,244.0 307.5,251.0 L 304.5,299.0 Q 304.0,306.0 302.8,312.9 L 299.2,335.1 Q 298.0,342.0 291.1,343.1 L 278.9,344.9 Q 272.0,346.0 270.8,339.1 L 265.2,306.9 Q 264.0,300.0 263.3,293.0 L 258.7,251.0 Q 258.0,244.0 257.7,237.0 L 256.3,207.0 Z\" fill=\"#2E9E8C\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-triceps-back-left\" class=\"group m-group-triceps\" data-group=\"MG0019\" data-area=\"MA0008\" role=\"img\" aria-label=\"Triceps\" d=\"M 83.7,207.0 Q 84.0,200.0 77.6,197.2 L 54.4,186.8 Q 48.0,184.0 46.2,190.8 L 33.8,237.2 Q 32.0,244.0 32.5,251.0 L 35.5,299.0 Q 36.0,306.0 37.2,312.9 L 40.8,335.1 Q 42.0,342.0 48.9,343.1 L 61.1,344.9 Q 68.0,346.0 69.2,339.1 L 74.8,306.9 Q 76.0,300.0 76.7,293.0 L 81.3,251.0 Q 82.0,244.0 82.3,237.0 L 83.7,207.0 Z\" fill=\"#2E9E8C\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-forearms-back-right\" class=\"group m-group-forearms\" data-group=\"MG0022\" data-area=\"MA0009\" role=\"img\" aria-label=\"Forearms\" d=\"M 268.5,354.8 Q 270.0,348.0 276.9,347.0 L 291.1,345.0 Q 298.0,344.0 298.5,351.0 L 301.5,397.0 Q 302.0,404.0 301.0,410.9 L 295.0,451.1 Q 294.0,458.0 288.2,461.9 L 281.8,466.1 Q 276.0,470.0 269.7,466.9 L 266.3,465.1 Q 260.0,462.0 260.2,455.0 L 261.8,411.0 Q 262.0,404.0 262.7,397.0 L 265.3,373.0 Q 266.0,366.0 267.5,359.2 L 268.5,354.8 Z\" fill=\"#EE8E86\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-forearms-back-left\" class=\"group m-group-forearms\" data-group=\"MG0022\" data-area=\"MA0009\" role=\"img\" aria-label=\"Forearms\" d=\"M 71.5,354.8 Q 70.0,348.0 63.1,347.0 L 48.9,345.0 Q 42.0,344.0 41.5,351.0 L 38.5,397.0 Q 38.0,404.0 39.0,410.9 L 45.0,451.1 Q 46.0,458.0 51.8,461.9 L 58.2,466.1 Q 64.0,470.0 70.3,466.9 L 73.7,465.1 Q 80.0,462.0 79.8,455.0 L 78.2,411.0 Q 78.0,404.0 77.3,397.0 L 74.7,373.0 Q 74.0,366.0 72.5,359.2 L 71.5,354.8 Z\" fill=\"#EE8E86\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-gluteus-back-right\" class=\"group m-group-gluteus\" data-group=\"MG0006\" data-area=\"MA0002\" role=\"img\" aria-label=\"Gluteus\" d=\"M 174.3,403.0 Q 174.0,396.0 181.0,395.3 L 205.0,392.7 Q 212.0,392.0 214.6,398.5 L 227.4,431.5 Q 230.0,438.0 229.8,445.0 L 229.2,468.0 Q 229.0,475.0 222.0,475.4 L 185.0,477.6 Q 178.0,478.0 177.5,471.0 L 176.5,455.0 Q 176.0,448.0 175.7,441.0 L 174.3,403.0 Z\" fill=\"#B8912E\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-gluteus-back-left\" class=\"group m-group-gluteus\" data-group=\"MG0006\" data-area=\"MA0002\" role=\"img\" aria-label=\"Gluteus\" d=\"M 165.7,403.0 Q 166.0,396.0 159.0,395.3 L 135.0,392.7 Q 128.0,392.0 125.4,398.5 L 112.6,431.5 Q 110.0,438.0 110.2,445.0 L 110.8,468.0 Q 111.0,475.0 118.0,475.4 L 155.0,477.6 Q 162.0,478.0 162.5,471.0 L 163.5,455.0 Q 164.0,448.0 164.3,441.0 L 165.7,403.0 Z\" fill=\"#B8912E\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-hamstring-back-right\" class=\"group m-group-hamstring\" data-group=\"MG0005\" data-area=\"MA0002\" role=\"img\" aria-label=\"Hamstring\" d=\"M 178.5,485.0 Q 178.0,478.0 185.0,477.6 L 222.0,475.4 Q 229.0,475.0 228.1,481.9 L 224.9,508.1 Q 224.0,515.0 222.4,521.8 L 215.6,551.2 Q 214.0,558.0 207.2,559.8 L 198.8,562.2 Q 192.0,564.0 190.6,557.1 L 181.4,511.9 Q 180.0,505.0 179.5,498.0 L 178.5,485.0 Z\" fill=\"#C9A93B\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-hamstring-back-left\" class=\"group m-group-hamstring\" data-group=\"MG0005\" data-area=\"MA0002\" role=\"img\" aria-label=\"Hamstring\" d=\"M 161.5,485.0 Q 162.0,478.0 155.0,477.6 L 118.0,475.4 Q 111.0,475.0 111.9,481.9 L 115.1,508.1 Q 116.0,515.0 117.6,521.8 L 124.4,551.2 Q 126.0,558.0 132.8,559.8 L 141.2,562.2 Q 148.0,564.0 149.4,557.1 L 158.6,511.9 Q 160.0,505.0 160.5,498.0 L 161.5,485.0 Z\" fill=\"#C9A93B\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-calves-back-right\" class=\"group m-group-calves\" data-group=\"MG0003\" data-area=\"MA0001\" role=\"img\" aria-label=\"Calves\" d=\"M 189.4,579.0 Q 190.0,572.0 196.9,571.1 L 215.1,568.9 Q 222.0,568.0 223.1,574.9 L 228.9,611.1 Q 230.0,618.0 229.2,624.9 L 222.8,677.1 Q 222.0,684.0 220.6,690.9 L 211.4,737.1 Q 210.0,744.0 203.1,744.9 L 200.9,745.1 Q 194.0,746.0 193.2,739.0 L 186.8,685.0 Q 186.0,678.0 186.0,671.0 L 186.0,625.0 Q 186.0,618.0 186.6,611.0 L 189.4,579.0 Z\" fill=\"#E9A23B\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <path id=\"grp-calves-back-left\" class=\"group m-group-calves\" data-group=\"MG0003\" data-area=\"MA0001\" role=\"img\" aria-label=\"Calves\" d=\"M 150.6,579.0 Q 150.0,572.0 143.1,571.1 L 124.9,568.9 Q 118.0,568.0 116.9,574.9 L 111.1,611.1 Q 110.0,618.0 110.8,624.9 L 117.2,677.1 Q 118.0,684.0 119.4,690.9 L 128.6,737.1 Q 130.0,744.0 136.9,744.9 L 139.1,745.1 Q 146.0,746.0 146.8,739.0 L 153.2,685.0 Q 154.0,678.0 154.0,671.0 L 154.0,625.0 Q 154.0,618.0 153.4,611.0 L 150.6,579.0 Z\" fill=\"#E9A23B\" fill-opacity=\"0.85\" stroke=\"#333\" stroke-width=\"1\"/>\n      <text x=\"170\" y=\"157\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Trapezius</text>\n      <text x=\"211\" y=\"245\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Latissimus Dorsi</text>\n      <text x=\"217\" y=\"178\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Rotator Cuff</text>\n      <text x=\"170\" y=\"361\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Abdominals</text>\n      <text x=\"266\" y=\"150\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Deltoids</text>\n      <text x=\"284\" y=\"271\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Triceps</text>\n      <text x=\"280\" y=\"407\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Forearms</text>\n      <text x=\"202\" y=\"438\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Gluteus</text>\n      <text x=\"205\" y=\"516\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Hamstring</text>\n      <text x=\"207\" y=\"654\" font-family=\"Inter, Arial, sans-serif\" font-size=\"10\" font-weight=\"600\" text-anchor=\"middle\" fill=\"#15242e\" stroke=\"#ffffff\" stroke-width=\"2.4\" paint-order=\"stroke\" style=\"pointer-events:none\">Calves</text>\n  </g>\n  <line x1=\"40\" y1=\"864\" x2=\"780\" y2=\"864\" stroke=\"#e2e2e2\" stroke-width=\"1\"/>\n  <text x=\"40\" y=\"888\" font-size=\"12\" font-weight=\"700\" fill=\"#5b636b\">Deep groups — shown as chips, not drawn on the figure</text>\n</svg>\n";
+const SVG_FIG = SVG_BODY_GROUPS.replace(/\sid="[^"]*"/g, "").replace(/\saria-labelledby="[^"]*"/g, "");
+const HM_DRAWN_GROUPS = new Set(Array.from(SVG_BODY_GROUPS.matchAll(/data-group="(MG\d+)"/g)).map(m => m[1]));
+const HM_RAMP = ["#F4E4BD","#EBCB8E","#E1A95C","#D07E3E","#B85632","#A83626"]; // pale amber -> oxblood (data only, D-42)
+const HM_GLANCE = { grain: "group", metric: "intensity", floor: 2 };          // fixed defaults for compact + per-day maps
+let hmState = { grain: "group", metric: "intensity", floor: 2, expanded: false }; // interactive: expanded weekly only
+
+function hmMaps() {
+  if (hmMaps._) return hmMaps._;
+  return hmMaps._ = {
+    mu: Object.fromEntries((DB.muscles||[]).map(m => [m.Muscle_ID, m])),
+    gN: Object.fromEntries((DB.muscle_groups||[]).map(g => [g.Group_ID, g.Group_Name])),
+    aN: Object.fromEntries((DB.general_areas||[]).map(a => [a.Area_ID, a.Area_Name]))
+  };
+}
+function hmEntriesForScope(scope) {
+  const m = currentMeso(); if (!m) return [];
+  const push = (arr, d) => d.exercises.forEach(ex => arr.push({ exerciseId: ex.exerciseId, sets: +ex.sets || 0 }));
+  if (scope === "weekly") { const w = []; m.microcycle.days.forEach(d => push(w, d)); return w; }
+  if (scope.indexOf("day:") === 0) { const d = (m.microcycle.days||[]).find(x => x.id === scope.slice(4)); const w = []; if (d) push(w, d); return w; }
+  return [];
+}
+// count-once roll-ups; intensity = sets x max-head-intensity above floor; set-count role-gated to Primary+Secondary (D-40)
+function hmCompute(entries, opt) {
+  const { mu } = hmMaps(); const metric = opt.metric, floor = opt.floor;
+  const gVal = {}, aVal = {}, muVal = {};
+  for (const { exerciseId, sets } of entries) {
+    const rows = (IX.emByEx[exerciseId] || []).filter(r =>
+      metric === "setcount" ? (r.Muscle_Role === "Primary" || r.Muscle_Role === "Secondary")
+                            : (+r.Intensity_Value > floor));
+    const gMax = {}, aMax = {}, gHit = new Set(), aHit = new Set();
+    for (const r of rows) {
+      const m = mu[r.Muscle_ID]; if (!m) continue;
+      const g = m.Group_ID, a = m.Area_ID, iv = +r.Intensity_Value;
+      gMax[g] = Math.max(gMax[g] || 0, iv); aMax[a] = Math.max(aMax[a] || 0, iv);
+      gHit.add(g); aHit.add(a);
+      muVal[r.Muscle_ID] = (muVal[r.Muscle_ID] || 0) + (metric === "setcount" ? sets : sets * iv);
+    }
+    for (const g of gHit) gVal[g] = (gVal[g] || 0) + (metric === "setcount" ? sets : sets * gMax[g]);
+    for (const a of aHit) aVal[a] = (aVal[a] || 0) + (metric === "setcount" ? sets : sets * aMax[a]);
+  }
+  return { gVal, aVal, muVal };
+}
+function hmColor(t) {
+  if (!(t > 0)) return "var(--hm-off)";
+  const tt = 0.18 + 0.82 * Math.min(1, t), n = HM_RAMP.length - 1, pos = tt * n;
+  let i = Math.floor(pos); if (i >= n) i = n - 1; const f = pos - i;
+  const hx = c => [parseInt(c.slice(1,3),16), parseInt(c.slice(3,5),16), parseInt(c.slice(5,7),16)];
+  const A = hx(HM_RAMP[i]), B = hx(HM_RAMP[i+1]), L = (a,b) => Math.round(a + (b-a)*f);
+  return "rgb(" + L(A[0],B[0]) + "," + L(A[1],B[1]) + "," + L(A[2],B[2]) + ")";
+}
+function hmUnanalyzed(entries) {
+  const s = new Set();
+  entries.forEach(e => { const rows = IX.emByEx[e.exerciseId]; if (!(rows && rows.length)) s.add(e.exerciseId); });
+  return s.size;
+}
+function hmPaintZones(svg, vals, grain) {
+  if (!svg) return 0;
+  const attr = grain === "area" ? "data-area" : "data-group";
+  svg.classList.toggle("hm-area", grain === "area");
+  let max = 0; for (const k in vals) if (vals[k] > max) max = vals[k];
+  svg.querySelectorAll("[" + attr + "]").forEach(p => {
+    const id = p.getAttribute(attr), v = vals[id] || 0;
+    p.style.fill = hmColor(max ? v / max : 0);
+    p.style.fillOpacity = "0.95";
+  });
+  return max;
+}
+function hmFigHTML(scope) { return '<div class="hm-fig" data-scope="' + scope + '" role="img">' + SVG_FIG + '</div>'; }
+
+function paintHeatmap() {
+  document.querySelectorAll(".hm-fig[data-scope]").forEach(fig => {
+    const scope = fig.dataset.scope;
+    const opt = (scope === "weekly" && hmState.expanded) ? hmState : HM_GLANCE;
+    const c = hmCompute(hmEntriesForScope(scope), opt);
+    const grain = opt.grain, vals = grain === "area" ? c.aVal : c.gVal;
+    hmPaintZones(fig.querySelector("svg"), vals, grain);
+  });
+  hmRenderWeeklySide();
+}
+function hmRenderWeeklySide() {
+  const { gN, aN } = hmMaps();
+  const entries = hmEntriesForScope("weekly");
+  const na = hmUnanalyzed(entries);
+  const naText = na ? na + " exercise" + (na > 1 ? "s" : "") + " not yet analyzed \u2014 not shown on the map." : "";
+  // compact state
+  const hot = document.getElementById("hmHot"), mini = document.getElementById("hmMini"), note = document.getElementById("hmNote");
+  if (hot || mini) {
+    const { gVal } = hmCompute(entries, HM_GLANCE);
+    const rank = Object.entries(gVal).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+    const max = rank.length ? rank[0][1] : 0;
+    if (hot) hot.innerHTML = rank.length ? "Hottest: <b>" + rank.slice(0, 3).map(([g]) => esc(gN[g] || g)).join(", ") + "</b>" : '<span class="hm-empty">No working sets planned yet.</span>';
+    if (mini) mini.innerHTML = rank.slice(0, 4).map(([g, v]) => '<li><span class="sw" style="background:' + hmColor(max ? v/max : 0) + '"></span><span class="nm">' + esc(gN[g] || g) + '</span><span class="vv">' + v + '</span></li>').join("");
+    if (note) note.textContent = naText;
+  }
+  // expanded state
+  const sh = document.getElementById("hmSideH"), list = document.getElementById("hmList");
+  const chips = document.getElementById("hmChips"), wrap = document.getElementById("hmDeepWrap"), noteX = document.getElementById("hmNoteX");
+  if (list) {
+    const c = hmCompute(entries, hmState);
+    const grain = hmState.grain, vals = grain === "area" ? c.aVal : c.gVal, names = grain === "area" ? aN : gN;
+    let max = 0; for (const k in vals) if (vals[k] > max) max = vals[k];
+    if (sh) sh.textContent = (grain === "area" ? "Areas" : "Groups") + " by planned work";
+    const rank = Object.entries(vals).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+    list.innerHTML = rank.length
+      ? rank.map(([id, v]) => '<li><span class="sw" style="background:' + hmColor(max ? v/max : 0) + '"></span><span class="nm">' + esc(names[id] || id) + '</span><span class="vv">' + v + '</span></li>').join("")
+      : '<li class="hm-empty">No working sets pass the current filter.</li>';
+    if (chips && wrap) {
+      if (grain === "group") {
+        wrap.style.display = "";
+        const deep = (DB.muscle_groups || []).filter(g => !HM_DRAWN_GROUPS.has(g.Group_ID));
+        chips.innerHTML = deep.map(g => {
+          const v = c.gVal[g.Group_ID] || 0, col = hmColor(max ? v/max : 0);
+          const st = v ? 'border-style:solid;border-color:' + col + ';background:' + col + ';color:#3a2016' : "";
+          return '<span class="hm-chip" style="' + st + '">' + esc(g.Group_Name) + (v ? " \u00b7 " + v : "") + '</span>';
+        }).join("");
+      } else { wrap.style.display = "none"; }
+    }
+    if (noteX) noteX.textContent = na ? na + " exercise" + (na > 1 ? "s" : "") + " in this week not yet analyzed \u2014 not counted." : "";
+  }
+}
+function hmSet(key, val) {
+  hmState[key] = val;
+  document.querySelectorAll('.hm-seg[data-k="' + key + '"] button').forEach(b => b.classList.toggle("on", b.dataset.v === val));
+  if (key === "metric") {
+    const fw = document.getElementById("hmFloorWrap"), fi = document.getElementById("hmFloor"), off = hmState.metric === "setcount";
+    if (fw) { fw.style.opacity = off ? ".4" : "1"; fw.title = off ? "Set count is role-gated (Primary + Secondary); the floor applies to the intensity metric." : ""; }
+    if (fi) fi.disabled = off;
+  }
+  paintHeatmap();
+}
+function hmSetFloor(v) { hmState.floor = +v; const r = document.getElementById("hmFloorVal"); if (r) r.textContent = "\u2264" + v; paintHeatmap(); }
+function hmToggleExpand() { hmState.expanded = !hmState.expanded; if (currentView === "plan") render(); }
+function hmRepaint() { if (currentView === "plan") paintHeatmap(); }
+
+function hmWeeklyHTML(m) {
+  const nEx = m.microcycle.days.reduce((s, d) => s + d.exercises.length, 0);
+  if (hmState.expanded) {
+    return '<div class="hm-panel">'
+      + '<div class="hm-head"><div><div class="hm-title">Weekly muscle map</div>'
+      + '<div class="hm-sub">Planned working sets across this week template \u00b7 warmups excluded (R9) \u00b7 Specific grain arrives in Phase 8</div></div>'
+      + '<button class="hm-expand" onclick="hmToggleExpand()">Collapse \u25be</button></div>'
+      + '<div class="hm-controls">'
+      + '<div class="hm-seg" data-k="grain"><button class="' + (hmState.grain==="group"?"on":"") + '" data-v="group" onclick="hmSet(\'grain\',\'group\')">Group</button><button class="' + (hmState.grain==="area"?"on":"") + '" data-v="area" onclick="hmSet(\'grain\',\'area\')">Area</button></div>'
+      + '<div class="hm-seg" data-k="metric"><button class="' + (hmState.metric==="intensity"?"on":"") + '" data-v="intensity" onclick="hmSet(\'metric\',\'intensity\')">Intensity-weighted</button><button class="' + (hmState.metric==="setcount"?"on":"") + '" data-v="setcount" onclick="hmSet(\'metric\',\'setcount\')">Set count</button></div>'
+      + '<label class="hm-floor" id="hmFloorWrap" style="opacity:' + (hmState.metric==="setcount"?".4":"1") + '">Ignore intensity <input type="range" min="0" max="8" value="' + hmState.floor + '" id="hmFloor" ' + (hmState.metric==="setcount"?"disabled":"") + ' oninput="hmSetFloor(this.value)"><span class="val" id="hmFloorVal">\u2264' + hmState.floor + '</span></label>'
+      + '<span class="hm-ramp">low<span class="hm-ramp-bar"></span>high</span>'
+      + '</div>'
+      + '<div class="hm-body">' + hmFigHTML("weekly")
+      + '<div class="hm-side"><h4 id="hmSideH">Groups by planned work</h4><ul class="hm-list" id="hmList"></ul>'
+      + '<div id="hmDeepWrap"><h4>Deep groups \u00b7 not drawn</h4><div class="hm-chips" id="hmChips"></div></div>'
+      + '<div class="hm-note" id="hmNoteX"></div></div>'
+      + '</div>'
+      + (nEx === 0 ? '<div class="hm-empty">Add exercises to the week template below to see the map light up.</div>' : "")
+      + '</div>';
+  }
+  return '<div class="hm-compact">'
+    + '<div class="hmc-left"><div class="hmc-h">Weekly muscle map <button class="hm-expand" onclick="hmToggleExpand()">Expand \u25b8</button></div>' + hmFigHTML("weekly") + '</div>'
+    + '<div class="hmc-right"><div class="hottest" id="hmHot"></div><ul class="hm-list mini" id="hmMini"></ul><div class="hm-note" id="hmNote"></div></div>'
+    + '</div>';
+}
+function hmDayMapHTML(d) {
+  return '<div class="workout-map"><div class="wm-cap">Workout map</div>' + hmFigHTML("day:" + d.id) + '</div>';
+}
+
 function heatColor(v){ v = Math.max(1, Math.min(10, Math.round(Number(v)||1))); return HEAT[v]; }
 function heatText(v){ return (Number(v)||1) >= 6 ? "#fff" : "#1B1E24"; }
 function swatch(v){ return `<span class="swatch" style="background:${heatColor(v)};color:${heatText(v)}">${v}</span>`; }
@@ -600,6 +835,7 @@ function render() {
                  : currentView === "health"   ? healthHTML()
                  : plannerHTML();
     if (currentView === "structure") wireStructureSearch();
+    if (currentView === "plan") paintHeatmap();
     return;
   }
 
@@ -1014,6 +1250,7 @@ function planSetRx(dayId, idx, field, val) {
   else if (field === "repRangeHigh") ex.repRangeHigh = Math.max(1, Math.min(100, n));
   else if (field === "targetRIR") ex.targetRIR = Math.max(0, Math.min(10, n));
   savePersonal();   // value already shown in the field — no re-render (keeps focus)
+  if (field === "sets") hmRepaint();
 }
 
 /* ---------- planner view ---------- */
@@ -1038,24 +1275,14 @@ function plannerHTML() {
   const p = activeProgram(), m = currentMeso();
   return `<div class="planner">
     ${plannerBar()}
-    <div class="plan-cols">
-      <aside class="plan-outline">
-        <div class="po-head"><span>Program</span></div>
-        <input class="name-input" value="${esc(p.name)}" onchange="planRenameProgram(this.value)" aria-label="Program name" />
-        <div class="po-actions"><button class="btn-ghost sm danger" onclick="planDeleteProgram()">Delete program</button></div>
-        <div class="po-head" style="margin-top:18px"><span>Mesocycles</span><button class="icon-add" title="Add mesocycle" onclick="planAddMeso()">+</button></div>
-        <div class="meso-list">
-          ${p.mesocycles.map(ms => `
-            <button class="meso-item ${m && ms.id === m.id ? "sel" : ""}" onclick="planSelectMeso('${ms.id}')">
-              <span class="mi-name">${esc(ms.name)}</span>
-              <span class="mi-meta mono">${ms.weeks}${ms.deload ? "+1" : ""} wk · ${ms.microcycle.days.length} day${ms.microcycle.days.length === 1 ? "" : "s"}</span>
-            </button>`).join("")}
-        </div>
-      </aside>
-      <section class="plan-editor">
-        ${m ? mesoEditorHTML(m) : `<div class="empty" style="padding:60px">No mesocycle selected.</div>`}
-      </section>
+    <div class="prog-meta">
+      <input class="name-input" value="${esc(p.name)}" onchange="planRenameProgram(this.value)" aria-label="Program name" />
+      <button class="btn-ghost sm danger" onclick="planDeleteProgram()">Delete program</button>
     </div>
+    ${mesoBar(p, m)}
+    <section class="plan-editor full">
+      ${m ? mesoEditorHTML(m) : `<div class="empty" style="padding:60px">No mesocycle selected. Add one above to start building.</div>`}
+    </section>
     <div class="plan-foot">${persist}</div>
   </div>`;
 }
@@ -1066,6 +1293,15 @@ function plannerBar() {
     <span class="pb-label">Programs</span>
     <div class="prog-pills">${pills || '<span class="muted">none yet</span>'}</div>
     <button class="btn sm" onclick="planNewProgram()">+ New program</button>
+  </div>`;
+}
+function mesoBar(p, m) {
+  const pills = p.mesocycles.map(ms =>
+    `<button class="meso-pill ${m && ms.id === m.id ? "sel" : ""}" onclick="planSelectMeso('${ms.id}')"><span class="mp-name">${esc(ms.name)}</span><span class="mp-meta mono">${ms.weeks}${ms.deload ? "+1" : ""} wk · ${ms.microcycle.days.length}d</span></button>`).join("");
+  return `<div class="meso-bar">
+    <span class="mb-label">Mesocycles</span>
+    <div class="meso-pills">${pills || '<span class="muted">none yet</span>'}</div>
+    <button class="btn sm" onclick="planAddMeso()">+ Add mesocycle</button>
   </div>`;
 }
 function mesoEditorHTML(m) {
@@ -1085,6 +1321,8 @@ function mesoEditorHTML(m) {
     </div>
     <div class="tpl-note">One week template, repeated ${m.weeks}×${m.deload ? " + a deload week" : ""}. Sets are working sets; RIR is the week-1 starting target. Week-to-week progression — adding sets and lowering RIR toward 0 — is layered on in a later phase.</div>
 
+    ${hmWeeklyHTML(m)}
+
     <div class="section-h" style="margin-top:22px"><span>Week template</span><button class="btn sm" onclick="planAddDay()">+ Add day</button></div>
     <div class="day-grid">
       ${days.map((d, di) => dayCardHTML(d, di, days.length)).join("")}
@@ -1096,6 +1334,7 @@ function dayCardHTML(d, di, count) {
     const meta = IX.exById[ex.exerciseId];
     const name = meta ? meta.Exercise_Name : ex.exerciseId;
     const cat = meta ? meta.Category : "";
+    const analyzed = IX.emByEx[ex.exerciseId] && IX.emByEx[ex.exerciseId].length;
     return `<div class="ex-row">
       <div class="ex-ord">
         <button class="ord-btn" ${idx === 0 ? "disabled" : ""} title="Move up" onclick="planMoveExercise('${d.id}',${idx},-1)">▲</button>
@@ -1104,7 +1343,7 @@ function dayCardHTML(d, di, count) {
       </div>
       <div class="ex-main">
         <div class="ex-name" title="${esc(name)}">${esc(name)}</div>
-        <div class="ex-sub mono">${esc(ex.exerciseId)}${cat ? " · " + cat : ""}</div>
+        <div class="ex-sub mono">${esc(ex.exerciseId)}${cat ? " · " + cat : ""}${analyzed ? "" : " · not analyzed"}</div>
       </div>
       <div class="ex-rx">
         <label>Sets<input type="number" min="1" max="20" value="${ex.sets}" class="rx" onchange="planSetRx('${d.id}',${idx},'sets',this.value)" /></label>
@@ -1123,6 +1362,7 @@ function dayCardHTML(d, di, count) {
         <button class="ex-del" title="Delete day" onclick="planDeleteDay('${d.id}')">✕</button>
       </div>
     </div>
+    ${hmDayMapHTML(d)}
     <div class="ex-list">${rows || `<div class="ex-empty">No exercises yet.</div>`}</div>
     <button class="add-ex" onclick="openPicker('${d.id}')">+ Add exercise</button>
   </div>`;
@@ -1161,7 +1401,7 @@ function pickerListHTML() {
   if (!list.length) return `<div class="ex-empty" style="padding:24px">No matches.</div>`;
   return list.map(e => `<div class="pick-row" data-id="${e.Exercise_ID}">
       <div><div class="pr-name">${esc(e.Exercise_Name)}</div>
-        <div class="pr-sub mono">${e.Exercise_ID}${e.Category ? " · " + e.Category : ""}${e.Equipment ? " · " + e.Equipment : ""}</div></div>
+        <div class="pr-sub mono">${e.Exercise_ID}${e.Category ? " · " + e.Category : ""}${e.Equipment ? " · " + e.Equipment : ""}${(IX.emByEx[e.Exercise_ID] && IX.emByEx[e.Exercise_ID].length) ? "" : " · not analyzed"}</div></div>
       <span class="pr-add">+ Add</span>
     </div>`).join("");
 }
